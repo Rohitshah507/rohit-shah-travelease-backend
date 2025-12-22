@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.schema({
+const userSchema = new mongoose.Schema({
     username: {
         type:String,
         required:[true,'Username is required'],
@@ -21,7 +21,6 @@ const userSchema = new mongoose.schema({
     password:{
         type:String,
         required:[true,'Password is required'],
-        maxLength:[12,'Password cannot be more than 12 characters long'],
         minLength:[6,'Password must be at least 6 characters long']
     },
     role:{
@@ -33,10 +32,27 @@ const userSchema = new mongoose.schema({
         type:Date,
         default:Date.now
     },
-    profileImageUrl:{
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+    isLoggedIn:{
+        type:Boolean,
+        default:false
+    },
+    token:{
         type:String,
-    }
-})
+        default:null
+    },
+    otp:{
+        type:String,
+        default:null
+    },  
+    otpExpiryTime:{
+        type:Date,
+        default:null
+    },
+},{timestamps:true});
 
 const User = mongoose.model('User',userSchema);
 
