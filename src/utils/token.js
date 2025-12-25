@@ -1,8 +1,20 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-import config from '../Config/config.js';
-import authService from '../Service/authService.js';
+import config from "../Config/config.js";
 
-const createToken = () => {
-  return jwt.sign(payload, config.jwtSecret, { expiresIn: '1h' });
+
+const createToken = (data) => {
+  return jwt.sign(data, config.jwtSecret, { expiresIn: "7d" });
 };
+
+const verifyToken = async (authToken) => {
+  return await new Promise((resolve, reject) => {
+    jwt.verify(authToken, config.jwtSecret, (error, data) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(data);
+    });
+  });
+};
+export { createToken, verifyToken };
