@@ -28,10 +28,6 @@ const userSchema = new mongoose.Schema({
         enum:['USER','GUIDE','ADMIN'],
         default:'USER'
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
-    },
     isVerified:{
         type:Boolean,
         default:false
@@ -44,14 +40,18 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:null
     },
-    otp:{
-        type:String,
-        default:null
+    verificationCode:{
+        type:Number,
     },  
-    otpExpiryTime:{
+    verificationCodeExpiryTime:{
         type:Date,
-        default:null
     },
+    resetPasswordToken:{
+        type:String,
+    },
+    resetPasswordCodeExpiryTime:{
+        type:Date,
+    }
 },{timestamps:true});
 
 const User = mongoose.model('User',userSchema);
