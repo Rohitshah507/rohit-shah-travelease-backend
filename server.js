@@ -1,15 +1,22 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+
 import authRoute from "./src/Routes/authRoute.js";
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
-import cors from "cors";
 
 const app = express();
 
-
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: config.frontend_url,
+    credentials: true,
+  })
+);
 
 /* ---------- ROUTES ---------- */
 app.use("/api/auth", authRoute);

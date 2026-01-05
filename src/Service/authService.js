@@ -28,21 +28,17 @@ const createUser = async (data) => {
       email: data.email,
       password: hashedPassword,
       role: data.role || "USER",
-      isLoggedIn: true,
       verificationCode,
       verificationCodeExpiryTime,
     });
 
     await sendVerificationCode(createdUser.email, verificationCode);
 
-    await verifyOTP(createdUser.email, verificationCode);
-
     const userData = {
       _id: createdUser._id,
       username: createdUser.username,
       email: createdUser.email,
       role: createdUser.role,
-      isLoggedIn: true,
       token: createdUser.token,
     };
 
@@ -60,18 +56,20 @@ const createUser = async (data) => {
 };
 
 const loginService = async (data) => {
-  const login = await User.findOne({ email: data.email });
+  const user = await User.findOne({ email: data.email });
 
-  if (!login) {
+  if (!user) {
     throw new Error("User not found");
   }
 
-  const isMatch = await bcrypt.compare(data.password, login.password);
+  const isMatch = await bcrypt.compare(data.password, user.password);
 
   if (!isMatch) {
     throw new Error("Invalid credentials");
   }
-  return login;
+
+
+  return user;
 };
 
 export { createUser, loginService };

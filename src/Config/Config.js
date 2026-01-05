@@ -4,6 +4,7 @@ dotenv.config();
 const config = {
   mongoDbUrl: process.env.MONGO_DB_URL || "",
   port: process.env.PORT || 5000,
+  frontend_url: process.env.FRONTEND_URL,
   jwtSecret: process.env.JWT_SECRET || "",
   emailUser: process.env.EMAIL_USER,
   emailPass: process.env.EMAIL_PASS,

@@ -1,6 +1,7 @@
-import { createToken } from "../utils/token.js";
+import { createToken, verifyToken } from "../utils/token.js";
 
 import { createUser, loginService } from "../Service/authService.js";
+import User from "../Model/User.js";
 
 const signUp = async (req, res) => {
   try {
@@ -33,19 +34,19 @@ const verifyEmail = async (req, res) => {
   const { email, verificationCode } = req.body;
 
   try {
-    const findingEmail = User.findOne(email);
+    const findingEmail = await User.findOne({ email });
 
     if (!findingEmail) {
-      res.status(404).json({ message: "User is not found" });
+      return res.status(404).json({ message: "User is not found" });
     }
-    if ((findingEmail.isVerified = true)) {
-      res.status(404).json({ message: "User is already verified" });
+    if (findingEmail.isVerified === true) {
+      return res.status(404).json({ message: "User is already verified" });
     }
-    if (findingEmail.verificationCodeExpiryTime < new Date()) {
-      res.status(404).json({ Message: "Code is Expired" });
+    if (findingEmail.verificationCodeExpiryTime < Date.now()) {
+      return res.status(404).json({ Message: "Code is Expired" });
     }
     if (findingEmail.verificationCode != verificationCode) {
-      res.status(404).json({ Message: "Invalid Verification Code" });
+      return res.status(404).json({ Message: "Invalid Verification Code" });
     }
 
     findingEmail.isVerified = true;
@@ -62,25 +63,54 @@ const verifyEmail = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const input = req.body;
+  const { email, password } = req.body;
 
   try {
-    if (!input.email || !input.password) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
       });
     }
 
-    const loginController = await loginService(input);
-
-    if (!loginController) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
+
+    if (!user.isVerified) {
+      return res.status(401).json({
+        success: false,
+        message: "Please verify your email to login",
+      });
+    }
+    const loginController = await loginService({ email, password });
+
+    const token = createToken({ loginController });
+
+    await res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+
+    verifyToken(token);
+    user.token = token;
+    user.isLoggedIn = true;
+    await user.save();
 
     return res.status(200).json({
       success: true,
       message: "Login Successful",
+      data: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     return res.status(401).json({
@@ -91,4 +121,14 @@ const login = async (req, res) => {
   }
 };
 
-export { signUp, verifyEmail, login };
+
+const logOut = (req, res) => {
+  try {
+     res.clearCookie("token");
+     return res.status(200).json({message: "Logout Successfully"})
+  } catch (error) {
+    res.statusCode(500).json(`${error}`)
+  }
+}
+
+export { signUp, verifyEmail, login, logOut };
