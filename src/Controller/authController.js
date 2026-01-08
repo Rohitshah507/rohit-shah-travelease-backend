@@ -14,15 +14,28 @@ const signUp = async (req, res) => {
       });
     }
 
+    if (userData.role === "GUIDE" && !req.guideDocument) {
+      return res.status(400).json({
+        message: "Citizenship document is required for guide registration",
+      });
+    }
+
     const data = await createUser(userData);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "User created successfully",
-      data: data,
+      data: data.data,
     });
   } catch (error) {
-    res.status(500).send({
+    if (error.message.includes("already exists")) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(500).send({
       success: false,
       message: "Internal Server Error",
       error: error.message,
@@ -62,6 +75,28 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const verifyGuide = async (req, res) => {
+    const { guideId } = req.params;
+
+    const guide = await User.findById(guideId);
+
+    if (!guide) {
+        return res.status(404).json({ message: "Guide not found" });
+    }
+
+    if (guide.role !== "GUIDE") {
+        return res.status(400).json({ message: "User is not a guide" });
+    }
+
+    guide.isVerified = true;
+    await guide.save();
+
+    res.status(200).json({
+        message: "Guide verified successfully"
+    });
+};
+
+
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -93,7 +128,7 @@ const login = async (req, res) => {
 
     await res.cookie("authToken", token, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "strict",
     });
 
@@ -121,14 +156,15 @@ const login = async (req, res) => {
   }
 };
 
-
 const logOut = (req, res) => {
   try {
-     res.clearCookie("token");
-     return res.status(200).json({message: "Logout Successfully"})
+    res.clearCookie("authToken");
+    return res.status(200).json({ message: "Logout Successfully" });
   } catch (error) {
-    res.statusCode(500).json(`${error}`)
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
-}
+};
 
-export { signUp, verifyEmail, login, logOut };
+export { signUp, verifyEmail, verifyGuide,login, logOut };

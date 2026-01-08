@@ -12,12 +12,8 @@ const createUser = async (data) => {
     const existingUser = await User.findOne({ email: data.email });
 
     if (existingUser) {
-      return {
-        success: false,
-        message: "User is already exist",
-      };
+      throw new Error("User with this email already exists");
     }
-
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const verificationCode = generateVerificationCode();
@@ -27,7 +23,7 @@ const createUser = async (data) => {
       username: data.username,
       email: data.email,
       password: hashedPassword,
-      role: data.role || "USER",
+      role: data.role || "TOURIST",
       verificationCode,
       verificationCodeExpiryTime,
     });
@@ -48,10 +44,7 @@ const createUser = async (data) => {
       data: userData,
     };
   } catch (error) {
-    return {
-      success: false,
-      message: error.message,
-    };
+    throw new Error(error.message);
   }
 };
 
@@ -67,7 +60,6 @@ const loginService = async (data) => {
   if (!isMatch) {
     throw new Error("Invalid credentials");
   }
-
 
   return user;
 };

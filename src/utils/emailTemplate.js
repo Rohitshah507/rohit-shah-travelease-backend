@@ -11,7 +11,7 @@ const generateEmailTemplate = (verificationCode) => {
     </div>
     <p style="font-size: 16px; color: #333;">Please use this code to verify your email address. The code will expire in 5 minutes.</p>
     <p style="font-size: 16px; color: #333;">If you did not request this, please ignore this email.</p>
-</div>`
+</div>`;
 };
 
-export {generateEmailTemplate}
+export { generateEmailTemplate };

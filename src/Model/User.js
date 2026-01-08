@@ -1,59 +1,72 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     username: {
-        type:String,
-        required:[true,'Username is required'],
+      type: String,
+      required: [true, "Username is required"],
     },
-    email:{
-        type:String,
-        required:[true,'Email is required'],
-        trim:true,
-        validate:{
-            validator:(value)=>{
-                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-                return emailRegex.test(value);
-            },
-            message:'Please enter a valid email address'
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      trim: true,
+      validate: {
+        validator: (value) => {
+          const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+          return emailRegex.test(value);
         },
-        unique:true
+        message: "Please enter a valid email address",
+      },
+      unique: true,
     },
-    password:{
-        type:String,
-        required:[true,'Password is required'],
-        minLength:[6,'Password must be at least 6 characters long']
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minLength: [6, "Password must be at least 6 characters long"],
     },
-    role:{
-        type:String,
-        enum:['USER','GUIDE','ADMIN'],
-        default:'USER'
+    role: {
+      type: String,
+      enum: ["TOURIST", "GUIDE", "ADMIN"],
+      default: "TOURIST",
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    guideDocument: {
+      type: String,
+      required: function () {
+        return this.role === "GUIDE";
+      },
     },
-    isLoggedIn:{
-        type:Boolean,
-        default:false
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
-    token:{
-        type:String,
-        default:null
+    isLoggedIn: {
+      type: Boolean,
+      default: false,
     },
-    verificationCode:{
-        type:Number,
-    },  
-    verificationCodeExpiryTime:{
-        type:Date,
+    token: {
+      type: String,
+      default: null,
     },
-    resetPasswordToken:{
-        type:String,
+    verificationCode: {
+      type: Number,
     },
-    resetPasswordCodeExpiryTime:{
-        type:Date,
-    }
-},{timestamps:true});
+    verificationCodeExpiryTime: {
+      type: Date,
+    },
+    resetPasswordCode: {
+      type: Number,
+    },
+    isOTPVerified: {
+      type: Boolean,
+      default: false,
+    },
+    resetCodeExpiry: {
+      type: Date,
+    },
+  },
+  { timestamps: true }
+);
 
-const User = mongoose.model('User',userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;
