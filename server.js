@@ -5,9 +5,12 @@ import cors from "cors";
 import authRoute from "./src/Routes/authRoute.js";
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
+import logger  from "./src/Middleware/logger.js";
 
 const app = express();
 
+/* ---------- MIDDLEWARE ---------- */
+app.use(logger);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

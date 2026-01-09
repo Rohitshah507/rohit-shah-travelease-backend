@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import {
   generateVerificationCode,
   sendVerificationCode,
+  generateResetCode,
+  sendResetCode,
 } from "../utils/generateCode.js";
 
 import User from "../Model/User.js";
@@ -12,7 +14,7 @@ const createUser = async (data) => {
     const existingUser = await User.findOne({ email: data.email });
 
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      return res.status(400).json({ message: "User with this email already exists" });
     }
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -40,28 +42,78 @@ const createUser = async (data) => {
 
     return {
       success: true,
-      message: "User is Created check your email for verification code",
       data: userData,
+    };
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const loginService = async (data) => {
+  const user = await User.findOne({ email: data.email }).select("+password");
+
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  const isMatch = await bcrypt.compare(data.password, user.password);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: "Invalid credentials" });
+  }
+
+  return user;
+};
+
+const sendOTPService = async (email) => {
+  try {
+    const result = await User.findOne({ email });
+    if (!result) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const forgetCode = generateResetCode();
+    const resetCodeExpiryTime = Date.now() + 10 * 60 * 1000;
+
+    result.resetPasswordCode = forgetCode;
+    result.resetCodeExpiry = resetCodeExpiryTime;
+    result.isOTPVerified = false;
+    await result.save();
+
+    await sendResetCode(result.email, forgetCode);
+
+    return {
+      success: true,
     };
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const loginService = async (data) => {
-  const user = await User.findOne({ email: data.email });
+const resetPasswordService = async (data) => {
+  try {
+    const user = await User.findOne({ email: data.email });
 
-  if (!user) {
-    throw new Error("User not found");
+    if (!user || !user.isOTPVerified) {
+      return {
+        success: false,
+        message: "Otp needs to verify",
+      };
+    }
+
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+
+    user.password = hashedPassword;
+    user.isOTPVerified = false;
+    await user.save();
+
+    return {
+      success: true,
+      message: "Password reset Successfully"
+    }
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
-
-  const isMatch = await bcrypt.compare(data.password, user.password);
-
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
-
-  return user;
 };
 
-export { createUser, loginService };
+export { createUser, loginService, sendOTPService, resetPasswordService };

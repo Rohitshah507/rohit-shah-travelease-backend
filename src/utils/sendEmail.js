@@ -8,6 +8,8 @@ const sendEmail = async ({ email, subject, message }) => {
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
+    port: 465,
+    secure: true,
     auth: {
       user: config.smtp_mail,
       pass: config.smtp_password,
@@ -23,5 +25,8 @@ const sendEmail = async ({ email, subject, message }) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+
+
 
 export { sendEmail };

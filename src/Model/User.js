@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minLength: [6, "Password must be at least 6 characters long"],
+      select: false,
     },
     role: {
       type: String,
@@ -34,6 +35,11 @@ const userSchema = new mongoose.Schema(
       required: function () {
         return this.role === "GUIDE";
       },
+    },
+    guideStatus: {
+      type: String,
+      enum: ["PENDING", "APPROVED", "REJECTED"],
+      default: "PENDING",
     },
     isVerified: {
       type: Boolean,
