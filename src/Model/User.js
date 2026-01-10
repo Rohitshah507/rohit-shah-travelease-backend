@@ -58,6 +58,9 @@ const userSchema = new mongoose.Schema(
     },
     verificationCodeExpiryTime: {
       type: Date,
+      index: {
+        expireAfterSeconds: 0,
+      },
     },
     resetPasswordCode: {
       type: Number,

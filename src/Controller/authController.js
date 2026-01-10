@@ -5,6 +5,7 @@ import {
   sendOTPService,
   loginService,
   resetPasswordService,
+  resendOTPService,
 } from "../Service/authService.js";
 import User from "../Model/User.js";
 
@@ -25,24 +26,23 @@ const signUp = async (req, res) => {
       });
     }
 
-    const data = await createUser(userData);
+    await createUser(userData);
 
     return res.status(201).json({
       success: true,
       message: "Check your email for verification code",
     });
   } catch (error) {
-    if (error.message.includes("already exists")) {
+    if (error.code === 11000) {
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: "User with this email already exists",
       });
     }
 
-    return res.status(500).send({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      message: "Internal Server Error",
-      error: error.message,
+      message: error.message || "Internal Server Error",
     });
   }
 };
@@ -51,35 +51,38 @@ const verifyEmail = async (req, res) => {
   const { email, verificationCode } = req.body;
 
   try {
-    const findingEmail = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!findingEmail) {
-      return res.status(404).json({ message: "User is not found" });
-    }
-    if (findingEmail.isVerified === true) {
-      return res.status(404).json({ message: "User is already verified" });
-    }
-    if (findingEmail.verificationCodeExpiryTime < Date.now()) {
-      return res.status(404).json({ Message: "Code is Expired" });
-    }
-    if (findingEmail.verificationCode != verificationCode) {
-      return res.status(404).json({ Message: "Invalid Verification Code" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    findingEmail.isVerified = true;
-    findingEmail.verificationCode = null;
-    findingEmail.verificationCodeExpiryTime = null;
-    await findingEmail.save();
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User already verified" });
+    }
 
-    res.status(200).json({
+    if (user.verificationCodeExpiryTime < Date.now()) {
+      return res.status(400).json({ message: "Verification code expired" });
+    }
+
+    if (user.verificationCode.toString() !== verificationCode.toString()) {
+      return res.status(400).json({ message: "Invalid verification code" });
+    }
+
+    user.isVerified = true;
+    user.verificationCode = null;
+    user.verificationCodeExpiryTime = null;
+    await user.save();
+
+    return res.status(200).json({
       success: true,
       message: "Email verified successfully",
-      findingEmail,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
 };
 
@@ -236,6 +239,28 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(401).json({ message: "Email is not Correct" });
+    }
+
+    await resendOTPService(email);
+
+    res.status(200).json({
+      success:true,
+      message:"Otp resent successfully"
+    })
+  } catch (error) {
+    res.status(401).json({
+      success:false,
+      message:"Internal Server Error"
+    })
+  }
+};
+
 const logOut = async (req, res) => {
   try {
     res.clearCookie("authToken");
@@ -259,4 +284,5 @@ export {
   verifyOTP,
   resetPassword,
   logOut,
+  resendOTP,
 };
