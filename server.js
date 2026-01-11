@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import authRoute from "./src/Routes/authRoute.js";
+import userRoute from "./src/Routes/userRoute.js";
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
 import logger  from "./src/Middleware/logger.js";
@@ -23,6 +24,7 @@ app.use(
 
 /* ---------- ROUTES ---------- */
 app.use("/api/auth", authRoute);
+app.use("/api/auth", userRoute);
 
 /* ---------- SERVER START ---------- */
 const startServer = async () => {

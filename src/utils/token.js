@@ -2,9 +2,8 @@ import jwt from "jsonwebtoken";
 
 import config from "../Config/config.js";
 
-
 const createToken = (data) => {
-   return jwt.sign(data, config.jwtSecret, { expiresIn: "7d" });
+  return jwt.sign(data, config.jwtSecret, { expiresIn: "7d" });
 };
 
 const verifyToken = async (authToken) => {

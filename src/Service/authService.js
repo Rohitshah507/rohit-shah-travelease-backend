@@ -6,8 +6,9 @@ import {
   generateResetCode,
   sendResetCode,
 } from "../utils/generateCode.js";
-
 import User from "../Model/User.js";
+
+
 
 const createUser = async (data) => {
   const existingUser = await User.findOne({ email: data.email });

@@ -141,7 +141,7 @@ const login = async (req, res) => {
 
     const loginController = await loginService({ email, password });
 
-    const token = createToken({ loginController });
+    const token = createToken({ userId: user._id });
 
     await res.cookie("authToken", token, {
       httpOnly: true,
@@ -156,13 +156,6 @@ const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login Successful",
-      data: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        isLoggedIn: true,
-      },
     });
   } catch (error) {
     return res.status(401).json({

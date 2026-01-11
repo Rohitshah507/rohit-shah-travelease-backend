@@ -1,20 +1,23 @@
+import User from "../Model/User.js";
 import { verifyToken } from "../utils/token.js";
 
 const auth = async (req, res, next) => {
-  const cookie = req.headers.cookie;
-
-  if (!cookie) {
-    return res.status(401).send("User is not authenticated");
-  }
-
-  const authToken = cookie.split("=")[1];
-
   try {
-    const data = await verifyToken(authToken);
-    req.user = await User.findById(data.id);
+    const cookie = req.cookies.authToken;
+
+    if (!cookie) {
+      return res.status(400).send("User is not authenticated");
+    }
+
+    const data = await verifyToken(cookie);
+
+    const user = await User.findById(data.userId);
+
+    if (!user) return res.status(401).send("User not found");
+    req.user = user;
     next();
   } catch (error) {
-    res.status(401).send("User is not authenticated");
+    return res.status(401).send(error.message);
   }
 };
 
