@@ -26,9 +26,9 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     role: {
-      type: String,
+      type: [String],
       enum: ["TOURIST", "GUIDE", "ADMIN"],
-      default: "TOURIST",
+      default: ["TOURIST"],
     },
     guideDocument: {
       type: String,
@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema(
       },
     },
     guideStatus: {
-      type: String,
+      type: [String],
       enum: ["PENDING", "APPROVED", "REJECTED"],
-      default: "PENDING",
+      default: ["PENDING"],
     },
     isVerified: {
       type: Boolean,

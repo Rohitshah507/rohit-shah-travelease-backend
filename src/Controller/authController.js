@@ -118,7 +118,7 @@ const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await loginService({ email, password });
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -139,8 +139,6 @@ const login = async (req, res) => {
       });
     }
 
-    const loginController = await loginService({ email, password });
-
     const token = createToken({ userId: user._id });
 
     await res.cookie("authToken", token, {
@@ -156,6 +154,12 @@ const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login Successful",
+      user: {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+      },
     });
   } catch (error) {
     return res.status(401).json({
@@ -243,14 +247,14 @@ const resendOTP = async (req, res) => {
     await resendOTPService(email);
 
     res.status(200).json({
-      success:true,
-      message:"Otp resent successfully"
-    })
+      success: true,
+      message: "Otp resent successfully",
+    });
   } catch (error) {
     res.status(401).json({
-      success:false,
-      message:"Internal Server Error"
-    })
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 

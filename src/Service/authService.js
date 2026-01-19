@@ -8,8 +8,6 @@ import {
 } from "../utils/generateCode.js";
 import User from "../Model/User.js";
 
-
-
 const createUser = async (data) => {
   const existingUser = await User.findOne({ email: data.email });
 
@@ -103,7 +101,7 @@ const resetPasswordService = async (data) => {
 };
 
 const resendOTPService = async (data) => {
-  const user = await User.findOne({email: data});
+  const user = await User.findOne({ email: data });
 
   if (!user) {
     throw { statusCode: 402, message: "Email is not correct" };
