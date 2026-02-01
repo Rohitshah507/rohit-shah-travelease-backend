@@ -1,6 +1,7 @@
 import packageService from "../Service/packageService.js";
 
 const createPackage = async (req, res) => {
+  const files = req.files;
   const data = req.body;
   try {
     if (
@@ -8,14 +9,21 @@ const createPackage = async (req, res) => {
       !data.price ||
       !data.duration ||
       !data.destination ||
-      !data.startDate ||
-      !data.image
+      !data.startDate
     ) {
       return res.status(400).json({
         success: false,
         message: "All data are required",
       });
     }
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "All data are required",
+      });
+    }
+
     if (data.price <= 0) {
       return res.status(400).json({
         success: false,
@@ -29,7 +37,7 @@ const createPackage = async (req, res) => {
       });
     }
 
-    const newPackage = packageService.createProduct(data);
+    const newPackage = await packageService.createProduct(data, files);
     return res.status(201).json({
       success: true,
       message: "Package created successfully",
@@ -124,4 +132,10 @@ const deletePackage = async (req, res) => {
   }
 };
 
-export default { createPackage, getAllPackages, getPackageById, updatePackage, deletePackage };
+export default {
+  createPackage,
+  getAllPackages,
+  getPackageById,
+  updatePackage,
+  deletePackage,
+};

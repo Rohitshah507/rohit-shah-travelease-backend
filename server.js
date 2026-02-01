@@ -1,15 +1,18 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import multer from "multer";
 
 import authRoute from "./src/Routes/authRoute.js";
 import userRoute from "./src/Routes/userRoute.js";
 import packageRoute from "./src/Routes/packageRoute.js";
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
-import logger  from "./src/Middleware/logger.js";
+import logger from "./src/Middleware/logger.js";
+import connectCloudinary from "./src/Config/cloudinary.js";
 
 const app = express();
+const upload = multer({ storage: multer.memoryStorage() });
 
 /* ---------- MIDDLEWARE ---------- */
 app.use(logger);
@@ -20,13 +23,13 @@ app.use(
   cors({
     origin: config.frontend_url,
     credentials: true,
-  })
+  }),
 );
 
 /* ---------- ROUTES ---------- */
 app.use("/api/auth", authRoute);
 app.use("/api/auth", userRoute);
-app.use("/api/user", packageRoute);
+app.use("/api/user", upload.array("images", 5), packageRoute);
 
 /* ---------- SERVER START ---------- */
 const startServer = async () => {
@@ -41,5 +44,8 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+/* ---------- Cloudinary ---------- */
+connectCloudinary();
 
 startServer();

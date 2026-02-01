@@ -8,7 +8,7 @@ const router = express.Router();
 router.post(
   "/",
   auth,
-  roleBasedAuth(["ADMIN", "GUIDE"]),
+  roleBasedAuth("ADMIN"),
   packageController.createPackage,
 );
 
@@ -18,13 +18,13 @@ router.get("/:id", packageController.getPackageById);
 
 router.put(
   "/:id",
-  roleBasedAuth(["ADMIN", "GUIDE"]),
+  roleBasedAuth("GUIDE"),
   packageController.updatePackage,
 );
 
 router.delete(
   "/:id",
-  roleBasedAuth(["ADMIN", "GUIDE"]),
+  roleBasedAuth("GUIDE"),
   packageController.deletePackage,
 );
 

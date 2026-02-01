@@ -8,11 +8,14 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || "",
   emailUser: process.env.EMAIL_USER,
   emailPass: process.env.EMAIL_PASS,
-  jwtSecret: process.env.JWT_SECRET, 
+  jwtSecret: process.env.JWT_SECRET,
   smtp_host: process.env.SMTP_HOST,
   smtp_service: process.env.SMTP_SERVICE,
   smtp_port: process.env.SMTP_PORT,
   smtp_mail: process.env.SMTP_MAIL,
-  smtp_password: process.env.SMTP_PASSWORD
+  smtp_password: process.env.SMTP_PASSWORD,
+  cloud_name: process.env.CLOUD_NAME || "",
+  api_key: process.env.API_KEY || "",
+  api_secret: process.env.API_SECRET || "",
 };
 export default config;

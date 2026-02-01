@@ -1,9 +1,11 @@
 import TourPackage from "../Model/TourPackages.js";
+import uploadFile from "../utils/file.js";
 
-const createProduct = async (data) => {
+const createProduct = async (data, files) => {
   if (!data) {
     throw { statusCode: 400, message: "Package data is required" };
   }
+  await uploadFile(files);
   const newPackage = await TourPackage.create(data);
   return newPackage;
 };
@@ -24,7 +26,7 @@ const updatePackage = async (id, data) => {
 };
 
 const deletePackage = async (id) => {
-  const deletedPackage = TourPackage.findByIdAndDelete(id);
+  TourPackage.findByIdAndDelete(id);
 };
 
 export default { createProduct, getAllPackages, getPackageById, updatePackage, deletePackage };
