@@ -20,13 +20,13 @@ const signUp = async (req, res) => {
       });
     }
 
-    if (userData.role === "GUIDE" && !req.guideDocument) {
+    if (userData.role === "GUIDE" && (!req.files || !req.files.guideDocument)) {
       return res.status(400).json({
         message: "Citizenship document is required for guide registration",
       });
     }
 
-    await createUser(userData);
+    await createUser(userData, req.files.guideDocument);
 
     return res.status(201).json({
       success: true,
@@ -86,7 +86,7 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const verifyGuide = async (req, res) => {
+const approveGuide = async (req, res) => {
   const { guideId } = req.params;
 
   const guide = await User.findById(guideId);
@@ -99,11 +99,11 @@ const verifyGuide = async (req, res) => {
     return res.status(400).json({ message: "User is not a guide" });
   }
 
-  guide.isVerified = true;
+  guide.guideStatus = "APPROVED";
   await guide.save();
 
   res.status(200).json({
-    message: "Guide verified successfully",
+    message: "Guide approved successfully",
   });
 };
 
@@ -275,7 +275,7 @@ const logOut = async (req, res) => {
 export {
   signUp,
   verifyEmail,
-  verifyGuide,
+  approveGuide,
   login,
   sendOTP,
   verifyOTP,

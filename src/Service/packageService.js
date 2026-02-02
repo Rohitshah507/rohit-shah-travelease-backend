@@ -1,12 +1,18 @@
 import TourPackage from "../Model/TourPackages.js";
 import uploadFile from "../utils/file.js";
 
-const createProduct = async (data, files) => {
+const createProduct = async (data, files, createdBy) => {
   if (!data) {
     throw { statusCode: 400, message: "Package data is required" };
   }
-  await uploadFile(files);
-  const newPackage = await TourPackage.create(data);
+  const uploadedResults = await uploadFile(files);
+
+  const imageUrls = uploadedResults.map((file) => file.secure_url);
+  const newPackage = await TourPackage.create({
+    ...data,
+    imageUrls,
+    createdBy,
+  });
   return newPackage;
 };
 
@@ -29,4 +35,10 @@ const deletePackage = async (id) => {
   TourPackage.findByIdAndDelete(id);
 };
 
-export default { createProduct, getAllPackages, getPackageById, updatePackage, deletePackage };
+export default {
+  createProduct,
+  getAllPackages,
+  getPackageById,
+  updatePackage,
+  deletePackage,
+};

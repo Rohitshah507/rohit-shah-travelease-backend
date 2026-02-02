@@ -33,6 +33,9 @@ const tourPackageSchema = new mongoose.Schema(
       enum: ["Active", "INActive"],
       default: "Active",
     },
+    createdBy:{
+      type: String
+    }
   },
   { timestamps: true }
 );

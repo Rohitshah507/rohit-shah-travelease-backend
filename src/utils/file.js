@@ -1,19 +1,28 @@
 import { v2 as cloudinary } from "cloudinary";
 
+const CLOUDINARY_FOLDER = "FYP";
 async function uploadFile(files) {
+  const uploadedResult = [];
+
   for (const file of files) {
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream((error, data) => {
-          if (error) {
-            return reject(error);
-          }
-          return resolve(data);
-        })
+        .upload_stream(
+          {
+            folder: CLOUDINARY_FOLDER,
+          },
+          (error, data) => {
+            if (error) {
+              return reject(error);
+            }
+            return resolve(data);
+          },
+        )
         .end(file.buffer);
     });
-    console.log(result)
+    uploadedResult.push(result);
   }
+  return uploadedResult;
 }
 
 export default uploadFile;

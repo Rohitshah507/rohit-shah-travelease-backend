@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import uploadFile from "../utils/file.js";
 
 import {
   generateVerificationCode,
@@ -8,7 +9,9 @@ import {
 } from "../utils/generateCode.js";
 import User from "../Model/User.js";
 
-const createUser = async (data) => {
+const createUser = async (data, files) => {
+  let guideDocument = null;
+
   const existingUser = await User.findOne({ email: data.email });
 
   if (existingUser) {
@@ -19,11 +22,18 @@ const createUser = async (data) => {
   const verificationCode = generateVerificationCode();
   const verificationCodeExpiryTime = Date.now() + 5 * 60 * 1000;
 
+  if (data.role == "GUIDE" && files) {
+    const uploadedResults = await uploadFile(files);
+
+    guideDocument = uploadedResults[0].secure_url;
+  }
+
   const createdUser = await User.create({
     username: data.username,
     email: data.email,
     password: hashedPassword,
     role: data.role || "TOURIST",
+    guideDocument,
     verificationCode,
     verificationCodeExpiryTime,
   });
@@ -43,6 +53,13 @@ const createUser = async (data) => {
 
 const loginService = async (data) => {
   const user = await User.findOne({ email: data.email }).select("+password");
+
+  if (user.role.includes("GUIDE") && !user.guideStatus.includes("APPROVED")) {
+    throw {
+      statusCode: 400,
+      message: "Your Guide Document is not Approved yet",
+    };
+  }
 
   if (!user) {
     throw { message: "User not found" };

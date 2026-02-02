@@ -1,7 +1,7 @@
 import {
   signUp,
   verifyEmail,
-  verifyGuide,
+  approveGuide,
   login,
   logOut,
   sendOTP,
@@ -11,12 +11,19 @@ import {
 } from "../Controller/authController.js";
 
 import express from "express";
+import multer from "multer";
 import auth from "../Middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/register", signUp);
-router.post("/verify-guide", verifyGuide);
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post(
+  "/register",
+  upload.fields([{ name: "guideDocument", maxCount: 1 }]),
+  signUp,
+);
+router.get("/approve-guide", approveGuide);
 router.post("/verify-email", verifyEmail);
 router.post("/login", login);
 router.post("/send-otp", sendOTP);
