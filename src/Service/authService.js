@@ -54,13 +54,6 @@ const createUser = async (data, files) => {
 const loginService = async (data) => {
   const user = await User.findOne({ email: data.email }).select("+password");
 
-  if (user.role.includes("GUIDE") && !user.guideStatus.includes("APPROVED")) {
-    throw {
-      statusCode: 400,
-      message: "Your Guide Document is not Approved yet",
-    };
-  }
-
   if (!user) {
     throw { message: "User not found" };
   }

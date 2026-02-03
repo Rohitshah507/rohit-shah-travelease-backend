@@ -133,9 +133,10 @@ const login = async (req, res) => {
       });
     }
 
-    if (user.role === "GUIDE" && user.guideStatus !== "approved") {
+    if (user.role.includes("GUIDE") && user.guideStatus !== "APPROVED") {
       return res.status(403).json({
-        message: "Your guide account is waiting for admin approval",
+        success: false,
+        message: "Your guide account is not approval yet",
       });
     }
 
