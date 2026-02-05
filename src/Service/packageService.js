@@ -11,7 +11,7 @@ const createProduct = async (data, files, createdBy) => {
   const newPackage = await TourPackage.create({
     ...data,
     imageUrls,
-    createdBy,
+    guideId: createdBy,
   });
   return newPackage;
 };

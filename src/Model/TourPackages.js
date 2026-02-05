@@ -16,7 +16,6 @@ const tourPackageSchema = new mongoose.Schema(
     guideId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     duration: {
       type: String,
@@ -37,9 +36,6 @@ const tourPackageSchema = new mongoose.Schema(
       type: String,
       enum: ["Active", "INActive"],
       default: "Active",
-    },
-    createdBy: {
-      type: String,
     },
   },
   { timestamps: true },

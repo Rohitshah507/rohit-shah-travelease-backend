@@ -1,7 +1,6 @@
 import {
   signUp,
   verifyEmail,
-  approveGuide,
   login,
   logOut,
   sendOTP,
@@ -23,7 +22,6 @@ router.post(
   upload.fields([{ name: "guideDocument", maxCount: 1 }]),
   signUp,
 );
-router.get("/approve-guide", approveGuide);
 router.post("/verify-email", verifyEmail);
 router.post("/login", login);
 router.post("/send-otp", sendOTP);

@@ -34,15 +34,23 @@ router.get(
 );
 
 router.put(
-  "/:id/confirm",
+  "/confirm/:id",
+  auth,
   roleBasedAuth("GUIDE"),
   bookingController.confirmationBooking,
 );
 
-// router.put(
-//   "/:id/cancel",
-//   roleBasedAuth("GUIDE"),
-//   bookingController.cancelBooking,
-// );
+router.put(
+  "/cancel/:id",
+  auth,
+  roleBasedAuth("TOURIST"),
+  bookingController.cancelBooking,
+);
 
+router.put(
+  "/cancel/:id",
+  auth,
+  roleBasedAuth("GUIDE"),
+  bookingController.guideCancelBooking,
+);
 export default router;

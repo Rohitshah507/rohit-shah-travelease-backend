@@ -7,6 +7,7 @@ import authRoute from "./src/Routes/authRoute.js";
 import userRoute from "./src/Routes/userRoute.js";
 import packageRoute from "./src/Routes/packageRoute.js";
 import bookingRoute from "./src/Routes/bookingRoute.js";
+import adminRoute from "./src/Routes/adminRoute.js";
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
 import logger from "./src/Middleware/logger.js";
@@ -32,6 +33,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/auth", userRoute);
 app.use("/api/user", upload.array("images", 5), packageRoute);
 app.use("/api/booking", bookingRoute);
+app.use("api/admin", adminRoute)
 
 /* ---------- SERVER START ---------- */
 const startServer = async () => {

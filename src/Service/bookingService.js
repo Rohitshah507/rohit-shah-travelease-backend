@@ -7,10 +7,20 @@ const createBooking = async (bookedBy, data) => {
     throw { statusCode: 402, message: "Tour Package is not found" };
   }
 
+  const checkingBooked = await Booking.findOne({
+    userId: bookedBy,
+    tourPackageId: data.tourPackageId,
+    bookingDate: data.bookingDate,
+  });
+  if (checkingBooked) {
+    throw { statusCode: 404, message: "Its already Booked" };
+  }
+
   const booking = await Booking.create({
     userId: bookedBy,
     tourPackageId: data.tourPackageId,
     bookingDate: data.bookingDate,
+    bookingStatus: "Pending",
   });
 
   return booking;
@@ -33,37 +43,63 @@ const getGuideBookings = async (guideId) => {
   return filtering;
 };
 
-const getAllBookings = async () => {
-  const bookings = await Booking.find()
-    .populate("tourPackageId")
-    .populate("userId");
-
-  return bookings;
-};
-
-const confirmationBooking = async (id) => {
-  const booking = await Booking.findById().populate("tourPackageId");
+const confirmationBooking = async (id, userId) => {
+  const booking = await Booking.findById(id).populate("tourPackageId");
   if (!booking) {
     throw { statusCode: 402, message: "Booking are not available" };
   }
 
-  if (!booking.tourPackageId.guideId !== userId) {
+  if (booking.tourPackageId.guideId.toString() !== userId.toString()) {
     throw { statusCode: 402, message: "Not Authorized" };
   }
 
-  booking.bookingStatus("Confirmed");
-  await save();
+  booking.bookingStatus = "Confirmed";
+  await booking.save();
 
   return booking;
 };
 
-const cancelBooking = async () => {};
+const cancelBooking = async (id, userId) => {
+  const booking = await Booking.findById(id);
+  if (!booking) {
+    throw { statusCode: 402, message: "Booking not Found" };
+  }
+
+  if (booking.userId.toString() !== userId) {
+    throw { statusCode: 402, message: "Not Authorized" };
+  }
+
+  booking.bookingStatus = "Cancelled";
+  await booking.save();
+
+  return booking;
+};
+
+const guideCancelBooking = async (id, userId) => {
+  const booking = await Booking.findById(id).populate({
+    path: "tourPackageId",
+    match: { guideId: userId },
+  });
+
+  if (!booking) {
+    throw { statusCode: 404, message: "Booking not found" };
+  }
+
+  if (!booking.tourPackageId) {
+    throw { statusCode: 401, message: "Unauthorized" };
+  }
+
+  booking.bookingStatus = "Cancelled";
+  await booking.save();
+
+  return booking;
+};
 
 export default {
   createBooking,
   getMyBookings,
   getGuideBookings,
-  getAllBookings,
   confirmationBooking,
   cancelBooking,
+  guideCancelBooking,
 };

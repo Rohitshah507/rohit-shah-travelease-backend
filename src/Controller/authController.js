@@ -86,27 +86,6 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const approveGuide = async (req, res) => {
-  const { guideId } = req.params;
-
-  const guide = await User.findById(guideId);
-
-  if (!guide) {
-    return res.status(404).json({ message: "Guide not found" });
-  }
-
-  if (guide.role !== "GUIDE") {
-    return res.status(400).json({ message: "User is not a guide" });
-  }
-
-  guide.guideStatus = "APPROVED";
-  await guide.save();
-
-  res.status(200).json({
-    message: "Guide approved successfully",
-  });
-};
-
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -133,7 +112,7 @@ const login = async (req, res) => {
       });
     }
 
-    if (user.role.includes("GUIDE") && user.guideStatus !== "APPROVED") {
+    if (user.role.includes("GUIDE") && !user.guideStatus.includes("APPROVED")) {
       return res.status(403).json({
         success: false,
         message: "Your guide account is not approval yet",
@@ -276,7 +255,6 @@ const logOut = async (req, res) => {
 export {
   signUp,
   verifyEmail,
-  approveGuide,
   login,
   sendOTP,
   verifyOTP,
