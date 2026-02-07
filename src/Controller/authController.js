@@ -7,6 +7,7 @@ import {
   resetPasswordService,
   resendOTPService,
 } from "../Service/authService.js";
+
 import User from "../Model/User.js";
 
 const signUp = async (req, res) => {
@@ -138,6 +139,7 @@ const login = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        token: user.token,
         isVerified: user.isVerified,
       },
     });
@@ -240,11 +242,20 @@ const resendOTP = async (req, res) => {
 
 const logOut = async (req, res) => {
   try {
-    res.clearCookie("authToken");
+    await res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
 
-    return res
-      .status(200)
-      .json({ message: "Logout Successfully", isLoggedIn: false });
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { token: null, isLoggedIn: false },
+      { new: true },
+    );
+    await user.save();
+
+    return res.status(200).json({ message: "Logout Successfully" });
   } catch (error) {
     return res
       .status(500)

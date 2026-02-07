@@ -12,12 +12,12 @@ router.post(
   packageController.createPackage,
 );
 
-router.get("/package", packageController.getAllPackages);
+router.get("/package", auth, roleBasedAuth("TOURIST"), packageController.getAllPackages);
 
-router.get("/:id", packageController.getPackageById);
+router.get("/:id", auth, roleBasedAuth("TOURIST"),packageController.getPackageById);
 
-router.put("/:id", roleBasedAuth("GUIDE"), packageController.updatePackage);
+router.put("/:id", auth, roleBasedAuth("GUIDE"), packageController.updatePackage);
 
-router.delete("/:id", roleBasedAuth("GUIDE"), packageController.deletePackage);
+router.delete("/:id", auth, roleBasedAuth("GUIDE"), packageController.deletePackage);
 
 export default router;

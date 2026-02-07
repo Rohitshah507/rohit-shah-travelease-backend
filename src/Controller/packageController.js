@@ -37,12 +37,16 @@ const createPackage = async (req, res) => {
       });
     }
 
-    const newPackage = await packageService.createProduct(data, files, req.user._id);
+    const newPackage = await packageService.createProduct(
+      data,
+      files,
+      req.user._id,
+    );
     return res.status(201).json({
       success: true,
       message: "Package created successfully",
       data: newPackage,
-      createdBy:req.user._id
+      createdBy: req.user._id,
     });
   } catch (error) {
     res.status(500).json({
@@ -67,6 +71,7 @@ const getAllPackages = async (req, res) => {
       message: "Invalid Server Error",
       error: error.message,
     });
+    console.log(error.message);
   }
 };
 

@@ -28,6 +28,6 @@ router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 router.post("/reset-password", resetPassword);
 router.post("/resend-otp", resendOTP);
-router.get("/logout", auth, logOut);
+router.put("/logout", auth, logOut);
 
 export default router;
