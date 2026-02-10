@@ -33,7 +33,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/auth", userRoute);
 app.use("/api/user", upload.array("images", 5), packageRoute);
 app.use("/api/booking", bookingRoute);
-app.use("api/admin", adminRoute)
+app.use("/api/auth", adminRoute)
 
 /* ---------- SERVER START ---------- */
 const startServer = async () => {

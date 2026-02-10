@@ -1,3 +1,4 @@
+import User from "../Model/User.js";
 import adminService from "../Service/adminService.js";
 
 const approveGuide = async (req, res) => {
