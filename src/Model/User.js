@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       minLength: [6, "Password must be at least 6 characters long"],
       select: false,
     },
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone number is required"],
+    },
     role: {
       type: [String],
       enum: ["TOURIST", "GUIDE", "ADMIN"],

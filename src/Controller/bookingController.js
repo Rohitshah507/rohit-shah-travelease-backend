@@ -5,13 +5,37 @@ const createBooking = async (req, res) => {
     const { tourPackageId, bookingDate } = req.body;
 
     if (!tourPackageId || !bookingDate) {
-      return res.status(404).send("All fields are Required");
+      return res.status(404).json({
+        success: false,
+        message: "All fields are Required",
+      });
+    }
+
+    if(new Date(bookingDate) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking date must be in the future",
+      });
     }
 
     const data = await bookingService.createBooking(req.user._id, {
       tourPackageId,
       bookingDate,
     });
+
+    if(!data) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to create booking. Please try again.",
+      });
+    }
+
+    if(bookingDate < data.bookingDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking date must be after the current date",
+      });
+    }
 
     return res.status(200).json({
       success: true,

@@ -6,7 +6,7 @@ import roleBasedAuth from "../Middleware/roleBasedAuth.js";
 const router = express.Router();
 
 router.post(
-  "/",
+  "/tourist",
   auth,
   roleBasedAuth("TOURIST"),
   bookingController.createBooking,

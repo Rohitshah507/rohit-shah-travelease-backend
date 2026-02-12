@@ -32,6 +32,7 @@ const createUser = async (data, files) => {
   const createdUser = await User.create({
     username: data.username,
     email: data.email,
+    phoneNumber: data.phoneNumber,
     password: hashedPassword,
     role: data.role || "TOURIST",
     guideDocument,

@@ -14,7 +14,7 @@ const signUp = async (req, res) => {
   try {
     const userData = req.body;
 
-    if (!userData.username || !userData.email || !userData.password) {
+    if (!userData.username || !userData.email || !userData.password || !userData.phoneNumber) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -27,7 +27,14 @@ const signUp = async (req, res) => {
       });
     }
 
-    await createUser(userData, req.files.guideDocument);
+    const data = await createUser(userData, req.files.guideDocument);
+
+    if(data.phoneNumber == userData.phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is already registered",
+      });
+    }
 
     return res.status(201).json({
       success: true,
@@ -138,6 +145,7 @@ const login = async (req, res) => {
       user: {
         username: user.username,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         role: user.role,
         token: user.token,
         isVerified: user.isVerified,

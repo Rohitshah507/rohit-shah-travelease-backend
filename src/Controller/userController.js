@@ -15,12 +15,7 @@ const userController = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User Details Sent Successfully",
-      user: {
-        name: userDetails.name,
-        email: userDetails.email,
-        role: userDetails.role,
-        isVerified: userDetails.isVerified
-      }
+      userDetails,
     });
   } catch (error) {
     res.status(500).json({
