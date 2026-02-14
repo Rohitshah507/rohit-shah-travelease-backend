@@ -3,13 +3,13 @@ import { verifyToken } from "../utils/token.js";
 
 const auth = async (req, res, next) => {
   try {
-    const cookie = req.cookies.authToken;
+    const token = req.headers.authorization?.split(" ")[1];
 
-    if (!cookie) {
+    if (!token) {
       return res.status(400).send("User is not authenticated");
     }
 
-    const data = await verifyToken(cookie);
+    const data = await verifyToken(token);
 
     const user = await User.findById(data.userId);
 

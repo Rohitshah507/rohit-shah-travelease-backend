@@ -10,7 +10,8 @@ const createBooking = async (bookedBy, data) => {
   const checkingBooked = await Booking.findOne({
     userId: bookedBy,
     tourPackageId: data.tourPackageId,
-    bookingDate: data.bookingDate,
+    StartDate: data.startDate,
+    EndDate: data.endDate,
   });
   if (checkingBooked) {
     throw { statusCode: 404, message: "Its already Booked" };
@@ -19,7 +20,10 @@ const createBooking = async (bookedBy, data) => {
   const booking = await Booking.create({
     userId: bookedBy,
     tourPackageId: data.tourPackageId,
-    bookingDate: data.bookingDate,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    numberOfAdults: data.numberOfAdults,
+    numberOfChildren: data.numberOfChildren,
     bookingStatus: "Pending",
   });
 

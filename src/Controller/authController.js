@@ -248,29 +248,6 @@ const resendOTP = async (req, res) => {
   }
 };
 
-const logOut = async (req, res) => {
-  try {
-    await res.clearCookie("authToken", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-    });
-
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { token: null, isLoggedIn: false },
-      { new: true },
-    );
-    await user.save();
-
-    return res.status(200).json({ message: "Logout Successfully" });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
-  }
-};
-
 export {
   signUp,
   verifyEmail,
@@ -278,6 +255,5 @@ export {
   sendOTP,
   verifyOTP,
   resetPassword,
-  logOut,
   resendOTP,
 };

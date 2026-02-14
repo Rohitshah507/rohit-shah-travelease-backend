@@ -2,38 +2,61 @@ import bookingService from "../Service/bookingService.js";
 
 const createBooking = async (req, res) => {
   try {
-    const { tourPackageId, bookingDate } = req.body;
+    const {
+      tourPackageId,
+      startDate,
+      endDate,
+      numberOfAdults,
+      numberOfChildren,
+    } = req.body;
 
-    if (!tourPackageId || !bookingDate) {
+    if (!tourPackageId || !startDate || !endDate) {
       return res.status(404).json({
         success: false,
         message: "All fields are Required",
       });
     }
 
-    if(new Date(bookingDate) < new Date()) {
+    if (new Date(startDate) < new Date()) {
       return res.status(400).json({
         success: false,
-        message: "Booking date must be in the future",
+        message: "Start date must be in the future",
+      });
+    }
+
+    if (new Date(endDate) <= new Date(startDate)) {
+      return res.status(400).json({
+        success: false,
+        message: "End date must be after start date",
+      });
+    }
+
+    if (numberOfAdults < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one adult is required for booking",
       });
     }
 
     const data = await bookingService.createBooking(req.user._id, {
       tourPackageId,
-      bookingDate,
+      startDate,
+      endDate,
+      numberOfAdults,
+      numberOfChildren,
     });
 
-    if(!data) {
+    if (!data) {
       return res.status(400).json({
         success: false,
         message: "Failed to create booking. Please try again.",
       });
     }
 
-    if(bookingDate < data.bookingDate) {
+    if (startDate < new Date()) {
       return res.status(400).json({
         success: false,
-        message: "Booking date must be after the current date",
+        message: "Start date must be after the current date",
       });
     }
 
@@ -133,16 +156,16 @@ const guideCancelBooking = async (req, res) => {
     const { id } = req.params._id;
 
     await bookingService.guideCancelBooking(id, req.user._id);
-    
+
     return res.status(201).json({
-      success:true,
-      message:"Cancelled"
-    })
+      success: true,
+      message: "Cancelled",
+    });
   } catch (error) {
     res.status(501).send({
-      success:false,
-      message:error.message || "Internal Server Error"
-    })
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
   }
 };
 

@@ -14,20 +14,37 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
-    bookingDate: {
+    startDate: {
       type: Date,
       required: true,
+    },
+
+    endDate: {
+      type: Date,
+      required: true,
+    },
+
+    numberOfAdults: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
+    numberOfChildren: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
 
     bookingStatus: {
       type: String,
       enum: ["Pending", "Confirmed", "Cancelled"],
-      required:true
+      required: true,
     },
   },
   { timestamps: true },
 );
 
-const Booking = mongoose.model("Booking", bookingSchema)
+const Booking = mongoose.model("Booking", bookingSchema);
 
 export default Booking;

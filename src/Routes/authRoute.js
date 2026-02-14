@@ -2,7 +2,6 @@ import {
   signUp,
   verifyEmail,
   login,
-  logOut,
   sendOTP,
   verifyOTP,
   resetPassword,
@@ -11,7 +10,6 @@ import {
 
 import express from "express";
 import multer from "multer";
-import auth from "../Middleware/auth.js";
 
 const router = express.Router();
 
@@ -28,6 +26,5 @@ router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 router.post("/reset-password", resetPassword);
 router.post("/resend-otp", resendOTP);
-router.put("/logout", auth, logOut);
 
 export default router;
