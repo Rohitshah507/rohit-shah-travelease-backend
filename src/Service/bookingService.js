@@ -37,10 +37,15 @@ const getMyBookings = async (userId) => {
 };
 
 const getGuideBookings = async (guideId) => {
-  const bookings = await Booking.find().populate({
-    path: "tourPackageId",
-    match: { guideId },
-  });
+  const bookings = await Booking.find()
+    .populate({
+      path: "tourPackageId",
+      match: { guideId },
+    })
+    .populate({
+      path: "userId",
+      select: "username email phoneNumber",
+    });
   const filtering = bookings.filter((b) => {
     return b.tourPackageId !== null;
   });
