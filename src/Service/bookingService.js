@@ -7,11 +7,15 @@ const createBooking = async (bookedBy, data) => {
     throw { statusCode: 402, message: "Tour Package is not found" };
   }
 
+  if (data.startDate > finding.startDate) {
+    throw { statusCode: 400, message: "Start date must be in the future" };
+  }
+
   const checkingBooked = await Booking.findOne({
     userId: bookedBy,
     tourPackageId: data.tourPackageId,
-    StartDate: data.startDate,
-    EndDate: data.endDate,
+    startDate: data.startDate,
+    endDate: data.endDate,
   });
   if (checkingBooked) {
     throw { statusCode: 404, message: "Its already Booked" };
@@ -19,11 +23,7 @@ const createBooking = async (bookedBy, data) => {
 
   const booking = await Booking.create({
     userId: bookedBy,
-    tourPackageId: data.tourPackageId,
-    startDate: data.startDate,
-    endDate: data.endDate,
-    numberOfAdults: data.numberOfAdults,
-    numberOfChildren: data.numberOfChildren,
+    ...data,
     bookingStatus: "Pending",
   });
 

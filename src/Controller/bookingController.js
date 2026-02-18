@@ -2,36 +2,23 @@ import bookingService from "../Service/bookingService.js";
 
 const createBooking = async (req, res) => {
   try {
-    const {
-      tourPackageId,
-      startDate,
-      endDate,
-      numberOfAdults,
-      numberOfChildren,
-    } = req.body;
+    const input = req.body;
 
-    if (!tourPackageId || !startDate || !endDate) {
+    if (!input.tourPackageId || !input.startDate || !input.endDate) {
       return res.status(404).json({
         success: false,
         message: "All fields are Required",
       });
     }
 
-    if (new Date(startDate) < new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: "Start date must be in the future",
-      });
-    }
-
-    if (new Date(endDate) <= new Date(startDate)) {
+    if (input.startDate >= input.endDate) {
       return res.status(400).json({
         success: false,
         message: "End date must be after start date",
       });
     }
 
-    if (numberOfAdults < 1) {
+    if (input.numberOfAdults < 1) {
       return res.status(400).json({
         success: false,
         message: "At least one adult is required for booking",
@@ -39,24 +26,17 @@ const createBooking = async (req, res) => {
     }
 
     const data = await bookingService.createBooking(req.user._id, {
-      tourPackageId,
-      startDate,
-      endDate,
-      numberOfAdults,
-      numberOfChildren,
+      tourPackageId: input.tourPackageId,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      numberOfAdults: input.numberOfAdults,
+      numberOfChildren: input.numberOfChildren,
     });
 
     if (!data) {
       return res.status(400).json({
         success: false,
         message: "Failed to create booking. Please try again.",
-      });
-    }
-
-    if (startDate < new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: "Start date must be after the current date",
       });
     }
 

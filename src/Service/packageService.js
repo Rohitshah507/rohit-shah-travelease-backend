@@ -3,7 +3,7 @@ import uploadFile from "../utils/file.js";
 
 const createProduct = async (data, files, createdBy) => {
   if (!data) {
-    throw { statusCode: 400, message: "Package data is required" };
+    throw { statusCode: 400, message: "Package data is not found" };
   }
   const uploadedResults = await uploadFile(files);
 
