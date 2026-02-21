@@ -5,14 +5,24 @@ import roleBasedAuth from "../Middleware/roleBasedAuth.js";
 
 const router = express.Router();
 
-router.post("/esewa/initiate", auth, roleBasedAuth("TOURIST"), paymentController.createPayment);
+router.post("/khalti/initiate", auth,  roleBasedAuth("TOURIST"), paymentController.initiateKhalti);
 
-router.get("/esewa/success", paymentController.esewaSuccess);
-
-router.get("/esewa/failure", paymentController.esewaFailure);
+router.get("/khalti/verify", paymentController.verifyKhalti);
 
 router.get("/payments", auth, paymentController.getPayment);
 
-router.get("/all-payments", auth, roleBasedAuth("ADMIN"), paymentController.getAllPayments);
+router.get(
+  "/guide-payments",
+  auth,
+  roleBasedAuth("GUIDE"),
+  paymentController.getGuidePayments,
+);
+
+router.get(
+  "/all-payments",
+  auth,
+  roleBasedAuth("ADMIN"),
+  paymentController.getAllPayments,
+);
 
 export default router;

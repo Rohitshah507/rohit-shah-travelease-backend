@@ -17,13 +17,18 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    method: {
+      type: String,
+      enum: ["KHALTI"],
+      default: "KHALTI",
+    },
     status: {
       type: String,
       enum: ["PENDING", "COMPLETED", "FAILED"],
       default: "PENDING",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("Payment", paymentSchema);
