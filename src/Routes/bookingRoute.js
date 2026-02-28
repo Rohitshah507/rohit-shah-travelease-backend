@@ -41,14 +41,14 @@ router.put(
 );
 
 router.put(
-  "/cancel/:id",
+  "/tourist/cancel/:id",
   auth,
   roleBasedAuth("TOURIST"),
   bookingController.cancelBooking,
 );
 
 router.put(
-  "/cancel/:id",
+  "/guide/cancel/:id",
   auth,
   roleBasedAuth("GUIDE"),
   bookingController.guideCancelBooking,

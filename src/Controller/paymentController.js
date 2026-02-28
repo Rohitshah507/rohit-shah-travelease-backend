@@ -1,16 +1,11 @@
 import paymentService from "../Service/paymentService.js";
 import Payment from "../Model/Payment.js";
-import Booking from "../Model/Booking.js";
 
 const initiateKhalti = async (req, res) => {
   try {
-    const { bookingId } = req.body;
+    const { id } = req.params;
 
-    const paymentUrl = await paymentService.initiateKhalti(
-      bookingId,
-      req.user._id,
-    );
-
+    const paymentUrl = await paymentService.initiateKhalti(id, req.user._id);
     res.json({
       success: true,
       paymentUrl,
@@ -23,34 +18,53 @@ const initiateKhalti = async (req, res) => {
   }
 };
 
-const verifyKhalti = async (req, res) => {
+const confirmKhaltiPayment = async (req, res) => {
   try {
-    const { pidx } = req.query;
+    const { pidx } = req.body;
 
-    const verification = await paymentService.verifyKhalti(pidx);
-
-    if (verification.status === "Completed") {
-      const payment = await Payment.findOne({
-        transaction_uuid: pidx,
+    if (!pidx) {
+      return res.status(400).json({
+        success: false,
+        message: "pidx is required",
       });
-
-      if (!payment) {
-        return res.status(404).json({ message: "Payment not found" });
-      }
-
-      payment.status = "COMPLETED";
-      await payment.save();
-
-      await Booking.findByIdAndUpdate(payment.bookingId, {
-        bookingStatus: "Confirmed",
-      });
-
-      return res.redirect("http://localhost:5173/payment-success");
     }
 
-    return res.redirect("http://localhost:5173/payment-failed");
+    // 1️⃣ Verify from Khalti
+    const khaltiResponse = await payment.confirmKhalti(pidx);
+
+    if (khaltiResponse.status !== "Completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment not completed",
+      });
+    }
+
+    // 2️⃣ Find pending payment
+    const payment = await Payment.findOne({
+      transaction_uuid: pidx,
+      status: "PENDING",
+    }).populate("bookingId");
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found",
+      });
+    }
+
+    // 3️⃣ Update payment
+    payment.status = "COMPLETED";
+    await payment.save();
+
+    return res.json({
+      success: true,
+      message: "Payment confirmed",
+    });
   } catch (error) {
-    return res.redirect("http://localhost:5173/payment-failed");
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -107,7 +121,7 @@ const getAllPayments = async (req, res) => {
 
 export default {
   initiateKhalti,
-  verifyKhalti,
+  confirmKhaltiPayment,
   getPayment,
   getGuidePayments,
   getAllPayments,

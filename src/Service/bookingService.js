@@ -16,6 +16,7 @@ const createBooking = async (bookedBy, data) => {
     tourPackageId: data.tourPackageId,
     startDate: data.startDate,
     endDate: data.endDate,
+    bookingStatus: { $in: ["Pending", "Confirmed"] },
   });
   if (checkingBooked) {
     throw { statusCode: 404, message: "Its already Booked" };
@@ -74,7 +75,7 @@ const cancelBooking = async (id, userId) => {
     throw { statusCode: 402, message: "Booking not Found" };
   }
 
-  if (booking.userId.toString() !== userId) {
+  if (booking.userId.toString() !== userId.toString()) {
     throw { statusCode: 402, message: "Not Authorized" };
   }
 

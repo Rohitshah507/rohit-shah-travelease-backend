@@ -114,7 +114,7 @@ const confirmationBooking = async (req, res) => {
 
 const cancelBooking = async (req, res) => {
   try {
-    const id = req.params._id;
+    const id = req.params.id;
     const userId = req.user._id;
 
     await bookingService.cancelBooking(id, userId);
@@ -133,7 +133,7 @@ const cancelBooking = async (req, res) => {
 
 const guideCancelBooking = async (req, res) => {
   try {
-    const { id } = req.params._id;
+    const { id } = req.params.id;
 
     await bookingService.guideCancelBooking(id, req.user._id);
 

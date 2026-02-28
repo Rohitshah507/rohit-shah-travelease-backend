@@ -28,7 +28,7 @@ const paymentSchema = new mongoose.Schema(
       default: "PENDING",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Payment", paymentSchema);
