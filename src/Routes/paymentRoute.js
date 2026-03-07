@@ -5,11 +5,11 @@ import roleBasedAuth from "../Middleware/roleBasedAuth.js";
 
 const router = express.Router();
 
-//api/payment/khalti/initiate/:id
+//api/payment/:id/khalti/initiate
 
 router.post("/:id/khalti/initiate", auth,  roleBasedAuth("TOURIST"), paymentController.initiateKhalti);
 
-router.post("/:id/khalti/confirm", paymentController.confirmKhaltiPayment);
+router.post("/:id/khalti/confirm", paymentController.confirmPayment);
 
 router.get("/payments", auth, paymentController.getPayment);
 

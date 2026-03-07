@@ -39,21 +39,6 @@ const payViaKhalti = async (data) => {
   return response.data;
 };
 
-const confirmKhalti = async (pidx) => {
-  if (!pidx) throw new Error("pidx is required");
 
-  const response = await axios.post(
-    `${config.khalti.api_url}/epayment/lookup/`,
-    { pidx },
-    {
-      headers: {
-        Authorization: `Key ${config.khalti.api_key}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
 
-  return response.data;
-};
-
-export default { payViaKhalti, confirmKhalti };
+export default { payViaKhalti };

@@ -4,69 +4,28 @@ import Payment from "../Model/Payment.js";
 const initiateKhalti = async (req, res) => {
   try {
     const { id } = req.params;
+    
+    const khaltiResponse = await paymentService.initiateKhalti(
+      id,
+      req.user._id,
+    );
 
-    const paymentUrl = await paymentService.initiateKhalti(id, req.user._id);
     res.json({
       success: true,
-      paymentUrl,
+      paymentUrl: khaltiResponse.payment_url, 
+      pidx: khaltiResponse.pidx, 
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(error.statusCode || 400).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-const confirmKhaltiPayment = async (req, res) => {
-  try {
-    const { pidx } = req.body;
+const confirmPayment = async (req,res)=>{
 
-    if (!pidx) {
-      return res.status(400).json({
-        success: false,
-        message: "pidx is required",
-      });
-    }
-
-    // 1️⃣ Verify from Khalti
-    const khaltiResponse = await payment.confirmKhalti(pidx);
-
-    if (khaltiResponse.status !== "Completed") {
-      return res.status(400).json({
-        success: false,
-        message: "Payment not completed",
-      });
-    }
-
-    // 2️⃣ Find pending payment
-    const payment = await Payment.findOne({
-      transaction_uuid: pidx,
-      status: "PENDING",
-    }).populate("bookingId");
-
-    if (!payment) {
-      return res.status(404).json({
-        success: false,
-        message: "Payment not found",
-      });
-    }
-
-    // 3️⃣ Update payment
-    payment.status = "COMPLETED";
-    await payment.save();
-
-    return res.json({
-      success: true,
-      message: "Payment confirmed",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+}
 
 const getPayment = async (req, res) => {
   try {
@@ -121,7 +80,7 @@ const getAllPayments = async (req, res) => {
 
 export default {
   initiateKhalti,
-  confirmKhaltiPayment,
+  confirmPayment,
   getPayment,
   getGuidePayments,
   getAllPayments,

@@ -31,4 +31,9 @@ const paymentSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+paymentSchema.index(
+  { bookingId: 1, status: 1 },
+  { unique: true, partialFilterExpression: { status: "COMPLETED" } },
+);
+
 export default mongoose.model("Payment", paymentSchema);
