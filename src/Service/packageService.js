@@ -32,7 +32,7 @@ const updatePackage = async (id, data) => {
 };
 
 const deletePackage = async (id) => {
-  TourPackage.findByIdAndDelete(id);
+  return TourPackage.findByIdAndDelete(id);
 };
 
 export default {

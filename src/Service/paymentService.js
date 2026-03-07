@@ -11,12 +11,21 @@ const initiateKhalti = async (id, userId) => {
     throw new Error("Booking not found");
   }
 
-  if (!booking.userId.equals(userId)) {
+  if (booking.userId._id.toString() !== userId.toString()) {
     throw { statusCode: 403, message: "Unauthorized" };
   }
 
+  const pendingBooking = await Payment.findOne({
+    bookingId: booking._id,
+    status: "PENDING",
+  });
+
+  if (pendingBooking) {
+    throw new Error("Payment already initiated for this booking");
+  }
+
   const existing = await Payment.findOne({
-    id: booking._id,
+    bookingId: booking._id,
     status: "COMPLETED",
   });
 
@@ -26,14 +35,20 @@ const initiateKhalti = async (id, userId) => {
 
   const transaction_uuid = crypto.randomUUID();
 
-  await Payment.create({
-    bookingId: booking._id,
-    userId,
-    amount: booking.tourPackageId.price,
-    method: "KHALTI",
-    status: "PENDING",
-    transaction_uuid,
-  });
+  await Payment.findOneAndUpdate(
+    { bookingId: booking._id, status: "PENDING" },
+    {
+      $setOnInsert: {
+        bookingId: booking._id,
+        userId,
+        amount: booking.tourPackageId.price,
+        method: "KHALTI",
+        status: "PENDING",
+        transaction_uuid,
+      },
+    },
+    { upsert: true, new: true },
+  );
 
   return await payment.payViaKhalti({
     amount: booking.tourPackageId.price * 100,
@@ -47,26 +62,44 @@ const initiateKhalti = async (id, userId) => {
   });
 };
 
-const ConfirmPayment = async (id) => {
-  const payment = await Payment.findById(id).populate("bookingId");
+const ConfirmPayment = async (id, status, user) => {
+  const paymentRecord = await Payment.findOne({
+    bookingId: id,
+    status: "PENDING",
+  }).populate("bookingId");
 
-  if (!payment) {
-    throw new Error("Payment not found");
+  if (!paymentRecord) {
+    throw { statusCode: 404, message: "Payment record not found" };
   }
 
-  const verification = await Payment.findOne({
-    transaction_uuid: id,
-    status: "COMPLETED",
-  });
-
-  if (verification.status === "Completed") {
-    payment.status = "COMPLETED";
-    await payment.save();
+  if (paymentRecord.userId._id.toString() !== user._id.toString()) {
+    throw { statusCode: 403, message: "Unauthorized" };
   }
 
-  return verification;
-}
+  if (status === "Completed") {
+    paymentRecord.status = "COMPLETED";
+    await paymentRecord.save();
 
+    return await Booking.findByIdAndUpdate(
+      id,
+      { bookingStatus: "CONFIRMED" },
+      { new: true },
+    );
+  }
+
+  if (status === "Failed") {
+    paymentRecord.status = "FAILED";
+    await paymentRecord.save();
+
+    return await Booking.findByIdAndUpdate(
+      id,
+      { bookingStatus: "FAILED" },
+      { new: true },
+    );
+  }
+
+  throw { statusCode: 400, message: "Invalid payment status" };
+};
 
 const getPayment = async (userId) => {
   return Payment.find({
@@ -81,11 +114,15 @@ const getGuidePayments = async (guideId) => {
     path: "bookingId",
     populate: {
       path: "tourPackageId",
-      match: { guideId },
     },
   });
 
-  return payments.filter((p) => p.bookingId?.tourPackageId);
+  return payments.filter(
+    (p) =>
+      p.bookingId &&
+      p.bookingId.tourPackageId &&
+      p.bookingId.tourPackageId.guideId.toString() === guideId.toString(),
+  );
 };
 
 const getAllPayments = async () => {

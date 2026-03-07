@@ -12,4 +12,21 @@ const userService = async (userId) => {
   return userDetails;
 };
 
-export { userService };
+
+// UPDATE USER PROFILE
+const updateUserService = async (userId, data) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      address: data.address
+    },
+    { new: true }
+  ).select("-password -__v");
+
+  return updatedUser;
+};
+
+export { userService, updateUserService };

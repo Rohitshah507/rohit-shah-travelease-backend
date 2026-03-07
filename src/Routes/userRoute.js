@@ -1,11 +1,11 @@
-import { userController } from "../Controller/userController.js";
-
 import express from "express";
 import auth from "../Middleware/auth.js";
 
+import { userController, updateUserController } from "../Controller/userController.js";
+
 const router = express.Router();
 
-
 router.get("/user", auth, userController);
+router.put("/user/:id/update", auth, updateUserController);
 
 export default router;
