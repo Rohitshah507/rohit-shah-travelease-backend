@@ -45,6 +45,24 @@ const userSchema = new mongoose.Schema(
       enum: ["PENDING", "APPROVED", "REJECTED"],
       default: ["PENDING"],
     },
+    location: {
+      type: String,
+      default: "Nepal",
+    },
+
+    experience: {
+      type: String,
+    },
+
+    specializations: {
+      type: [String],
+      default: [],
+    },
+
+    languages: {
+      type: [String],
+      default: [],
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -73,7 +91,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);

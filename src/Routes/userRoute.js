@@ -6,6 +6,6 @@ import { userController, updateUserController } from "../Controller/userControll
 const router = express.Router();
 
 router.get("/user", auth, userController);
-router.put("/user/:id/update", auth, updateUserController);
+router.put("/user/update/:id", auth, updateUserController);
 
 export default router;

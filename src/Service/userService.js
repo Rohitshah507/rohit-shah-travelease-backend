@@ -2,7 +2,7 @@ import User from "../Model/User.js";
 
 const userService = async (userId) => {
   const userDetails = await User.findById(userId).select(
-    "-password -__v -verificationCode -verificationCodeExpiryTime"
+    "-password -__v -verificationCode -verificationCodeExpiryTime",
   );
 
   if (!userDetails) {
@@ -12,19 +12,12 @@ const userService = async (userId) => {
   return userDetails;
 };
 
-
 // UPDATE USER PROFILE
 const updateUserService = async (userId, data) => {
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    {
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      address: data.address
-    },
-    { new: true }
-  ).select("-password -__v");
+  console.log(userId, data);
+  const updatedUser = await User.findByIdAndUpdate(userId, data, {
+    new: true,
+  }).select("-password -__v");
 
   return updatedUser;
 };
