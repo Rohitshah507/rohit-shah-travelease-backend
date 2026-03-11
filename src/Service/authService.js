@@ -45,6 +45,7 @@ const createUser = async (data, files) => {
   const userData = {
     _id: createdUser._id,
     username: createdUser.username,
+    guideDocument:createUser.guideDocument,
     email: createdUser.email,
     role: createdUser.role,
     token: createdUser.token,

@@ -5,11 +5,32 @@ import roleBasedAuth from "../Middleware/roleBasedAuth.js";
 
 const router = express.Router();
 
+router.get(
+  "/pending-guides",
+  auth,
+  roleBasedAuth("ADMIN"),
+  adminController.getPendingGuides,
+);
+
+router.get(
+  "/all-guides",
+  auth,
+  roleBasedAuth("ADMIN"),
+  adminController.getAllGuides,
+);
+
 router.put(
   "/approve-guide/:id",
   auth,
   roleBasedAuth("ADMIN"),
   adminController.approveGuide,
+);
+
+router.put(
+  "/reject-guide/:id",
+  auth,
+  roleBasedAuth("ADMIN"),
+  adminController.rejectGuide,
 );
 
 router.get(
@@ -18,7 +39,5 @@ router.get(
   roleBasedAuth("ADMIN"),
   adminController.getAllBookings,
 );
-
-
 
 export default router;
