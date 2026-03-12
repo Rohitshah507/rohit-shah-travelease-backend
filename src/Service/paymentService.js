@@ -62,43 +62,32 @@ const initiateKhalti = async (id, userId) => {
   });
 };
 
-const ConfirmPayment = async (id, status, user) => {
-  const paymentRecord = await Payment.findOne({
-    bookingId: id,
-    status: "PENDING",
-  }).populate("bookingId");
+const ConfirmPayment = async (paymentId) => {
+  const paymentRecord = await Payment.findById(paymentId).populate("bookingId");
 
   if (!paymentRecord) {
     throw { statusCode: 404, message: "Payment record not found" };
   }
 
-  if (paymentRecord.userId._id.toString() !== user._id.toString()) {
-    throw { statusCode: 403, message: "Unauthorized" };
+  if (paymentRecord.status !== "PENDING") {
+    throw {
+      statusCode: 400,
+      message: `Payment is already ${paymentRecord.status}`,
+    };
   }
 
-  if (status === "Completed") {
-    paymentRecord.status = "COMPLETED";
-    await paymentRecord.save();
+  paymentRecord.status = "COMPLETED";
+  await paymentRecord.save();
 
-    return await Booking.findByIdAndUpdate(
-      id,
+  if (paymentRecord.bookingId) {
+    await Booking.findByIdAndUpdate(
+      paymentRecord.bookingId._id || paymentRecord.bookingId,
       { bookingStatus: "CONFIRMED" },
       { new: true },
     );
   }
 
-  if (status === "Failed") {
-    paymentRecord.status = "FAILED";
-    await paymentRecord.save();
-
-    return await Booking.findByIdAndUpdate(
-      id,
-      { bookingStatus: "FAILED" },
-      { new: true },
-    );
-  }
-
-  throw { statusCode: 400, message: "Invalid payment status" };
+  return paymentRecord;
 };
 
 const getPayment = async (userId) => {
@@ -125,12 +114,12 @@ const getGuidePayments = async (guideId) => {
   );
 };
 
+
 const getAllPayments = async () => {
-  return Payment.find({
-    status: "COMPLETED",
-  })
+  return Payment.find({})
     .populate("userId", "username email")
-    .populate("bookingId");
+    .populate("bookingId")
+    .sort({ createdAt: -1 }); // newest first
 };
 
 export default {

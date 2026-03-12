@@ -1,10 +1,9 @@
 import paymentService from "../Service/paymentService.js";
-import Payment from "../Model/Payment.js";
 
 const initiateKhalti = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const khaltiResponse = await paymentService.initiateKhalti(
       id,
       req.user._id,
@@ -12,8 +11,8 @@ const initiateKhalti = async (req, res) => {
 
     res.json({
       success: true,
-      paymentUrl: khaltiResponse.payment_url, 
-      pidx: khaltiResponse.pidx, 
+      paymentUrl: khaltiResponse.payment_url,
+      pidx: khaltiResponse.pidx,
     });
   } catch (error) {
     res.status(error.statusCode || 400).json({
@@ -23,9 +22,24 @@ const initiateKhalti = async (req, res) => {
   }
 };
 
-const confirmPayment = async (req,res)=>{
+const ConfirmPayment = async (req, res) => {
+  try {
+    const { id } = req.params; 
 
-}
+    const data = await paymentService.ConfirmPayment(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment Confirmed Successfully",
+      data: data,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
 
 const getPayment = async (req, res) => {
   try {
@@ -80,7 +94,7 @@ const getAllPayments = async (req, res) => {
 
 export default {
   initiateKhalti,
-  confirmPayment,
+  ConfirmPayment,
   getPayment,
   getGuidePayments,
   getAllPayments,

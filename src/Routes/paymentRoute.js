@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/:id/khalti/initiate", auth,  roleBasedAuth("TOURIST"), paymentController.initiateKhalti);
 
-router.post("/:id/khalti/confirm", paymentController.confirmPayment);
+router.post("/:id/khalti/confirm", auth, roleBasedAuth("ADMIN"), paymentController.ConfirmPayment);
 
 router.get("/payments", auth, paymentController.getPayment);
 
