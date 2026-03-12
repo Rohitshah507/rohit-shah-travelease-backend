@@ -19,7 +19,6 @@ router.post(
 router.get(
   "/package",
   auth,
-  roleBasedAuth("TOURIST", "GUIDE"),
   packageController.getAllPackages,
 );
 
