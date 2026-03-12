@@ -33,7 +33,6 @@ const createBooking = async (bookedBy, data) => {
 
 const getMyBookings = async (userId) => {
   const bookings = await Booking.find({ userId }).populate("tourPackageId");
-
   return bookings;
 };
 
@@ -47,10 +46,22 @@ const getGuideBookings = async (guideId) => {
       path: "userId",
       select: "username email phoneNumber",
     });
-  const filtering = bookings.filter((b) => {
-    return b.tourPackageId !== null;
-  });
+  const filtering = bookings.filter((b) => b.tourPackageId !== null);
   return filtering;
+};
+
+const getAllBookings = async () => {
+  return Booking.find()
+    .populate("userId", "username email phoneNumber")
+    .populate({
+      path: "tourPackageId",
+      select: "title price guideId",
+      populate: {
+        path: "guideId",
+        select: "username email",
+      },
+    })
+    .sort({ createdAt: -1 }); 
 };
 
 const confirmationBooking = async (id, userId) => {
@@ -109,6 +120,7 @@ export default {
   createBooking,
   getMyBookings,
   getGuideBookings,
+  getAllBookings,      // ← was missing, now added
   confirmationBooking,
   cancelBooking,
   guideCancelBooking,
