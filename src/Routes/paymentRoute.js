@@ -7,7 +7,7 @@ const router = express.Router();
 
 //api/payment/:id/khalti/initiate
 
-router.post("/:id/khalti/initiate", auth,  roleBasedAuth("TOURIST"), paymentController.initiateKhalti);
+router.post("/:id/epayment/initiate", auth,  roleBasedAuth("TOURIST"), paymentController.initiateKhalti);
 
 router.post("/:id/khalti/confirm", auth, roleBasedAuth("ADMIN"), paymentController.ConfirmPayment);
 

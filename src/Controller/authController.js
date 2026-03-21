@@ -14,10 +14,22 @@ const signUp = async (req, res) => {
   try {
     const userData = req.body;
 
-    if (!userData.username || !userData.email || !userData.password || !userData.phoneNumber) {
+    if (
+      !userData.username ||
+      !userData.email ||
+      !userData.password ||
+      !userData.phoneNumber
+    ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+
+    if (!userData.phoneNumber.length !== 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone Number need to be 10 digit",
       });
     }
 
@@ -29,7 +41,7 @@ const signUp = async (req, res) => {
 
     const data = await createUser(userData, req.files.guideDocument);
 
-    if(data.phoneNumber == userData.phoneNumber) {
+    if (data.phoneNumber == userData.phoneNumber) {
       return res.status(400).json({
         success: false,
         message: "Phone number is already registered",
@@ -145,7 +157,7 @@ const login = async (req, res) => {
       user: {
         _id: user._id,
         username: user.username,
-        guideDocument:user.guideDocument,
+        guideDocument: user.guideDocument,
         email: user.email,
         phoneNumber: user.phoneNumber,
         role: user.role,

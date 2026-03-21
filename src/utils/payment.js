@@ -25,20 +25,27 @@ const payViaKhalti = async (data) => {
     },
   };
 
-  const response = await axios.post(
-    `${config.khalti.api_url}/epayment/initiate/`,
-    body,
-    {
-      headers: {
-        Authorization: `Key ${config.khalti.api_key}`,
-        "Content-Type": "application/json",
+  try {
+    const response = await axios.post(
+      `${config.khalti.api_url}/epayment/initiate/`,
+      body,
+      {
+        headers: {
+          Authorization: `Key ${config.khalti.api_key}`,
+          "Content-Type": "application/json",
+        },
       },
-    },
-  );
+    );
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    console.log("KHALTI FULL ERROR:", error.response?.data);
+    console.log("KHALTI KEY SENT:", `Key ${config.khalti.api_key}`);
+    throw {
+      statusCode: 400,
+      message: error.response?.data?.detail || "Khalti initiation failed",
+    };
+  }
 };
-
-
 
 export default { payViaKhalti };

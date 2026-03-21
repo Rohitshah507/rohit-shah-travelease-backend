@@ -7,21 +7,10 @@ const initiateKhalti = async (id, userId) => {
     .populate("tourPackageId")
     .populate("userId");
 
-  if (!booking) {
-    throw new Error("Booking not found");
-  }
+  if (!booking) throw new Error("Booking not found");
 
   if (booking.userId._id.toString() !== userId.toString()) {
     throw { statusCode: 403, message: "Unauthorized" };
-  }
-
-  const pendingBooking = await Payment.findOne({
-    bookingId: booking._id,
-    status: "PENDING",
-  });
-
-  if (pendingBooking) {
-    throw new Error("Payment already initiated for this booking");
   }
 
   const existing = await Payment.findOne({
@@ -29,28 +18,17 @@ const initiateKhalti = async (id, userId) => {
     status: "COMPLETED",
   });
 
-  if (existing) {
-    throw new Error("Booking already paid");
+  if (!booking.userId.phoneNumber || booking.userId.phoneNumber.length !== 10) {
+    throw new Error("Invalid phone number");
   }
+
+  if (existing) throw new Error("Booking already paid");
+
+  await Payment.deleteOne({ bookingId: booking._id, status: "PENDING" });
 
   const transaction_uuid = crypto.randomUUID();
 
-  await Payment.findOneAndUpdate(
-    { bookingId: booking._id, status: "PENDING" },
-    {
-      $setOnInsert: {
-        bookingId: booking._id,
-        userId,
-        amount: booking.tourPackageId.price,
-        method: "KHALTI",
-        status: "PENDING",
-        transaction_uuid,
-      },
-    },
-    { upsert: true, new: true },
-  );
-
-  return await payment.payViaKhalti({
+  const khaltiResponse = await payment.payViaKhalti({
     amount: booking.tourPackageId.price * 100,
     purchase_order_id: booking._id.toString(),
     purchase_order_name: "Tour Booking Payment",
@@ -60,6 +38,17 @@ const initiateKhalti = async (id, userId) => {
       phone: booking.userId.phoneNumber,
     },
   });
+
+  await Payment.create({
+    bookingId: booking._id,
+    userId,
+    amount: booking.tourPackageId.price,
+    method: "KHALTI",
+    status: "PENDING",
+    transaction_uuid,
+  });
+
+  return khaltiResponse;
 };
 
 const ConfirmPayment = async (paymentId) => {
@@ -113,7 +102,6 @@ const getGuidePayments = async (guideId) => {
       p.bookingId.tourPackageId.guideId.toString() === guideId.toString(),
   );
 };
-
 
 const getAllPayments = async () => {
   return Payment.find({})
