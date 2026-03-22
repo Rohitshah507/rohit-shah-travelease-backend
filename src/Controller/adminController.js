@@ -1,5 +1,6 @@
 import User from "../Model/User.js";
 import adminService from "../Service/adminService.js";
+import { io, userSocketMap } from "../utils/socket.js";
 
 const getPendingGuides = async (req, res) => {
   try {
@@ -37,8 +38,22 @@ const approveGuide = async (req, res) => {
   guide.guideStatus[0] = "APPROVED";
   await guide.save();
 
+  await Notification.create({
+    userId: guide._id,
+    message: "Guide Approved Successfully!",
+    type: "USER",
+  });
+
+  const socketId = userSocketMap.get(guide._id.toString());
+
+  if (socketId) {
+    io.to(socketId).emit("guideApproved", {
+      message: "🎉 Your guide account is approved!",
+    });
+  }
+
   res.status(200).json({
-    message: "Guide approved successfully",
+    success: true,
   });
 };
 

@@ -1,5 +1,7 @@
 import Booking from "../Model/Booking.js";
 import TourPackage from "../Model/TourPackages.js";
+import Notification from "../Model/Notification.js";
+import { io, userSocketMap } from "../utils/socket.js";
 
 const createBooking = async (bookedBy, data) => {
   const finding = await TourPackage.findById(data.tourPackageId);
@@ -27,6 +29,26 @@ const createBooking = async (bookedBy, data) => {
     ...data,
     bookingStatus: "Pending",
   });
+
+  await Notification.create({
+    userId: bookedBy,
+    message: "Your booking has been placed successfully!🧳",
+    type: "BOOKING",
+  });
+
+  await Notification.create({
+    userId: finding.guideId,
+    message: "📢 A new booking has been made on your package!",
+    type: "BOOKING",
+  });
+
+  const socketId = userSocketMap.get(finding.guideId.toString());
+
+  if (socketId) {
+    io.to(socketId).emit("newBooking", {
+      message: "📢 New booking received!",
+    });
+  }
 
   return booking;
 };
@@ -61,7 +83,7 @@ const getAllBookings = async () => {
         select: "username email",
       },
     })
-    .sort({ createdAt: -1 }); 
+    .sort({ createdAt: -1 });
 };
 
 const confirmationBooking = async (id, userId) => {
@@ -76,6 +98,20 @@ const confirmationBooking = async (id, userId) => {
 
   booking.bookingStatus = "Confirmed";
   await booking.save();
+
+  await Notification.create({
+    userId: booking.userId,
+    message: "🎉 Your booking has been confirmed by the guide!",
+    type: "BOOKING",
+  });
+
+  const socketId = userSocketMap.get(booking.userId.toString());
+
+  if (socketId) {
+    io.to(socketId).emit("bookingConfirmed", {
+      message: "🎉 Your booking has been confirmed!",
+    });
+  }
 
   return booking;
 };
@@ -92,7 +128,6 @@ const cancelBooking = async (id, userId) => {
 
   booking.bookingStatus = "Cancelled";
   await booking.save();
-
   return booking;
 };
 
@@ -113,6 +148,20 @@ const guideCancelBooking = async (id, userId) => {
   booking.bookingStatus = "Cancelled";
   await booking.save();
 
+  await Notification.create({
+    userId: booking.userId,
+    message: "Your booking has been cancelled by the guide!",
+    type: "BOOKING",
+  });
+
+  const socketId = userSocketMap.get(booking.userId.toString());
+
+  if (socketId) {
+    io.to(socketId).emit("bookingCancelled", {
+      message: "❌ Your booking was cancelled by guide",
+    });
+  }
+
   return booking;
 };
 
@@ -120,7 +169,7 @@ export default {
   createBooking,
   getMyBookings,
   getGuideBookings,
-  getAllBookings,      // ← was missing, now added
+  getAllBookings,
   confirmationBooking,
   cancelBooking,
   guideCancelBooking,

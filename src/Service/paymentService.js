@@ -1,6 +1,7 @@
 import Payment from "../Model/Payment.js";
 import Booking from "../Model/Booking.js";
 import payment from "../utils/payment.js";
+import Notification from "../Model/Notification.js";
 
 const initiateKhalti = async (id, userId) => {
   const booking = await Booking.findById(id)
@@ -30,7 +31,7 @@ const initiateKhalti = async (id, userId) => {
 
   const khaltiResponse = await payment.payViaKhalti({
     amount: booking.tourPackageId.price * 100,
-    purchase_order_id: booking._id.toString(),
+    purchase_order_id: transaction_uuid,
     purchase_order_name: "Tour Booking Payment",
     customer_info: {
       name: booking.userId.username,
@@ -67,6 +68,20 @@ const ConfirmPayment = async (paymentId) => {
 
   paymentRecord.status = "COMPLETED";
   await paymentRecord.save();
+
+  await Notification.create({
+    userId: paymentRecord.userId,
+    message: "Payment successful 💰 Your booking is confirmed!",
+    type: "PAYMENT",
+  });
+
+  const socketId = userSocketMap.get(paymentRecord.userId.toString());
+
+  if (socketId) {
+    io.to(socketId).emit("paymentSuccess", {
+      message: "💰 Payment successful!",
+    });
+  }
 
   if (paymentRecord.bookingId) {
     await Booking.findByIdAndUpdate(
