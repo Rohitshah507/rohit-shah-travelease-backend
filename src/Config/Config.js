@@ -17,10 +17,14 @@ const config = {
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",
-  khalti:{
+  khalti: {
     api_key: process.env.KHALTI_API_KEY || "",
     api_url: process.env.KHALTI_API_URL || "",
     return_url: process.env.RETURN_URL || "",
+  },
+  gemini: {
+    api_key: process.env.GEMINI_API_KEY || "",
+    url: process.env.GEMINI_URL || "",
   },
 };
 export default config;
