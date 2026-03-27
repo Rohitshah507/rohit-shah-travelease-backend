@@ -11,6 +11,8 @@ import bookingRoute from "./src/Routes/bookingRoute.js";
 import adminRoute from "./src/Routes/adminRoute.js";
 import paymentRoute from "./src/Routes/paymentRoute.js";
 import notificationRoute from "./src/Routes/notificationRoute.js";
+import reviewRoute from "./src/Routes/reviewRoute.js";
+
 import connectDB from "./src/Config/db.js";
 import config from "./src/Config/config.js";
 import logger from "./src/Middleware/logger.js";
@@ -37,6 +39,7 @@ app.use("/api/user", packageRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/auth", adminRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/review", reviewRoute);
 app.use("/api/notifications", notificationRoute);
 
 /* ---------- SERVER START ---------- */
