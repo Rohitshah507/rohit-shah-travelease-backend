@@ -59,7 +59,6 @@ const startServer = async () => {
   }
 };
 
-/* ---------- Cloudinary ---------- */
 connectCloudinary();
 
 startServer();
