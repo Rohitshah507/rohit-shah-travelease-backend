@@ -1,22 +1,22 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { initSocket } from "./src/utils/socket.js";
+import { initSocket } from "../src/utils/socket.js";
 import http from "http";
 
-import authRoute from "./src/Routes/authRoute.js";
-import userRoute from "./src/Routes/userRoute.js";
-import packageRoute from "./src/Routes/packageRoute.js";
-import bookingRoute from "./src/Routes/bookingRoute.js";
-import adminRoute from "./src/Routes/adminRoute.js";
-import paymentRoute from "./src/Routes/paymentRoute.js";
-import notificationRoute from "./src/Routes/notificationRoute.js";
-import reviewRoute from "./src/Routes/reviewRoute.js";
+import authRoute from "../src/Routes/authRoute.js";
+import userRoute from "../src/Routes/userRoute.js";
+import packageRoute from "../src/Routes/packageRoute.js";
+import bookingRoute from "../src/Routes/bookingRoute.js";
+import adminRoute from "../src/Routes/adminRoute.js";
+import paymentRoute from "../src/Routes/paymentRoute.js";
+import notificationRoute from "../src/Routes/notificationRoute.js";
+import reviewRoute from "../src/Routes/reviewRoute.js";
 
-import connectDB from "./src/Config/db.js";
-import config from "./src/Config/config.js";
-import logger from "./src/Middleware/logger.js";
-import connectCloudinary from "./src/Config/cloudinary.js";
+import connectDB from "../src/Config/db.js";
+import config from "../src/Config/config.js";
+import logger from "../src/Middleware/logger.js";
+import connectCloudinary from "../src/Config/cloudinary.js";
 
 const app = express();
 
