@@ -12,9 +12,8 @@ import adminRoute from "../src/Routes/adminRoute.js";
 import paymentRoute from "../src/Routes/paymentRoute.js";
 import notificationRoute from "../src/Routes/notificationRoute.js";
 import reviewRoute from "../src/Routes/reviewRoute.js";
-
-import connectDB from "../src/Config/db.js";
 import config from "../src/Config/config.js";
+import connectDB from "../src/Config/db.js";
 import logger from "../src/Middleware/logger.js";
 import connectCloudinary from "../src/Config/cloudinary.js";
 
@@ -27,7 +26,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: config.frontend_url,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   }),
 );
@@ -47,11 +46,12 @@ const startServer = async () => {
   try {
     await connectDB();
     const server = http.createServer(app);
+    const port = process.env.PORT || 5000;
 
     initSocket(server);
 
-    server.listen(config.port, () => {
-      console.log(`Server running on port ${config.port}`);
+    server.listen(port, () => {
+      console.log(`Server running on port ${port}`);
     });
   } catch (error) {
     console.error("Error starting server:", error.message);
