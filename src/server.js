@@ -21,15 +21,15 @@ const app = express();
 
 /* ---------- MIDDLEWARE ---------- */
 app.use(logger);
-app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL, "https://chic-pie-af4a5d.netlify.app/"],
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   }),
 );
+app.use(express.json());
 
 /* ---------- ROUTES ---------- */
 app.use("/api/auth", authRoute);
