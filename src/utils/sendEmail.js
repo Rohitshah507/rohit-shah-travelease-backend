@@ -4,11 +4,11 @@ import config from "../Config/config.js";
 // ✅ Create once, reuse — faster & more efficient
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   auth: {
     user: config.smtp_mail,
-    pass: config.smtp_password, // ← Must be Gmail App Password on Render
+    pass: config.smtp_password, 
   },
 });
 
