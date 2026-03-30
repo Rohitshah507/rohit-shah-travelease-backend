@@ -39,7 +39,7 @@ const signUp = async (req, res) => {
       });
     }
 
-    const data = await createUser(userData, req.files.guideDocument);
+    const data = await createUser(userData, req.files?.guideDocument || null);
 
     if (data.phoneNumber == userData.phoneNumber) {
       return res.status(400).json({
