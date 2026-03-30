@@ -26,5 +26,7 @@ const config = {
     api_key: process.env.GEMINI_API_KEY || "",
     url: process.env.GEMINI_URL || "",
   },
+  brevo_smtp_key: process.env.BREVO_SMTP_KEY,
+  smtp_mail: process.env.SMTP_MAIL,
 };
 export default config;

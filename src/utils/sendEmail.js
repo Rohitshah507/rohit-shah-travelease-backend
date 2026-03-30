@@ -2,10 +2,12 @@ import nodemailer from "nodemailer";
 import config from "../Config/config.js";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",  // ✅ this handles everything automatically
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
   auth: {
     user: config.smtp_mail,
-    pass: config.smtp_password,
+    pass: config.brevo_smtp_key,
   },
 });
 
