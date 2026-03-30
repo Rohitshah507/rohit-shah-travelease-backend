@@ -40,7 +40,9 @@ const createUser = async (data, files) => {
     verificationCodeExpiryTime,
   });
 
-  await sendVerificationCode(createdUser.email, verificationCode);
+    sendVerificationCode(createdUser.email, verificationCode).catch((err) =>
+    console.error("Background email error:", err.message)
+  );
 
   const userData = {
     _id: createdUser._id,

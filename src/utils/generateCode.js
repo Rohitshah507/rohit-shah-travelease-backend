@@ -4,61 +4,44 @@ import { sendEmail } from "./sendEmail.js";
 
 const generateVerificationCode = () => {
   const firstDigit = Math.floor(Math.random() * 9) + 1;
-  const remainingDigit = Math.floor(Math.random() * 10000)
+  const remainingDigits = Math.floor(Math.random() * 10000)
     .toString()
-    .padStart(4, 0);
-
-  return firstDigit + remainingDigit;
+    .padStart(4, "0");
+  return `${firstDigit}${remainingDigits}`;
 };
 
 const sendVerificationCode = async (email, verificationCode) => {
   try {
     const message = generateEmailTemplate(verificationCode);
-
-    await sendEmail({
-      email,
-      subject: "Your Verification Code",
-      message,
-    });
-
+    await sendEmail({ email, subject: "Your Verification Code", message });
+    console.log(`✅ OTP sent successfully to ${email}`);
   } catch (error) {
-    return {
-        success: false,
-        message: `Failed to send verification code: ${error.message}`,
-    }
+    // ✅ Log clearly in Render logs so you can debug
+    console.error(`❌ Failed to send OTP to ${email}:`, error.message);
   }
 };
 
-
-
 const generateResetCode = () => {
   const firstDigit = Math.floor(Math.random() * 9) + 1;
-  const remainingDigit = Math.floor(Math.random() * 10000)
+  const remainingDigits = Math.floor(Math.random() * 10000)
     .toString()
-    .padStart(4, 0);
-
-  return firstDigit + remainingDigit;
+    .padStart(4, "0");
+  return `${firstDigit}${remainingDigits}`;
 };
 
 const sendResetCode = async (email, resetCode) => {
   try {
     const message = resetEmailTemplate(resetCode);
-
-    await sendEmail({
-      email,
-      subject: "Reset Code",
-      message,
-    });
-
+    await sendEmail({ email, subject: "Reset Code", message });
+    console.log(`✅ Reset code sent successfully to ${email}`);
   } catch (error) {
-    return {
-        success: false,
-        message: `Failed to send reset code: ${error.message}`,
-    }
+    console.error(`❌ Failed to send reset code to ${email}:`, error.message);
   }
 };
 
-
-
-
-export { generateVerificationCode, sendVerificationCode, generateResetCode, sendResetCode };
+export {
+  generateVerificationCode,
+  sendVerificationCode,
+  generateResetCode,
+  sendResetCode,
+};
