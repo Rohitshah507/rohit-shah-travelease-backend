@@ -8,7 +8,6 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || "",
   smtp_mail: process.env.SMTP_MAIL,
   smtp_password: process.env.SMTP_PASSWORD,
-  brevo_smtp_key: process.env.BREVO_SMTP_KEY, 
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",

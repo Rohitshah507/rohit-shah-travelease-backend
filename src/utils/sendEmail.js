@@ -24,7 +24,13 @@ const sendEmail = async ({ email, subject, message }) => {
     html: message,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.response);
+  } catch (err) {
+    console.error("❌ Email error:", err.message); // This will show in Railway logs
+    throw err;
+  }
 };
 
 export { sendEmail };
