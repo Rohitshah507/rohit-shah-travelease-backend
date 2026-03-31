@@ -1,23 +1,33 @@
-import { Resend } from 'resend';
-import config from '../Config/config.js';
+import nodemailer from "nodemailer";
+import config from "../Config/config.js";
 
-const resend = new Resend(config.resend_api_key);
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: config.brevo_user,
+    pass: config.brevo_pass,
+  },
+});
 
 const sendEmail = async ({ email, subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
-  const { error } = await resend.emails.send({
-    from: 'TravelEase <onboarding@resend.dev>',
+  const mailOptions = {
+    from: `"TravelEase" <${config.brevo_user}>`,
     to: email,
     subject: subject,
     html: message,
-  });
+  };
 
-  if (error) {
-    throw new Error(error.message);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.response);
+  } catch (err) {
+    console.error("❌ Email error:", err.message);
+    throw err;
   }
-
-  console.log(`✅ Email sent successfully to ${email}`);
 };
 
 export { sendEmail };

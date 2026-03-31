@@ -12,6 +12,8 @@ const config = {
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",
   resend_api_key: process.env.RESEND_API_KEY,
+  brevo_user: process.env.BREVO_USER,
+  brevo_pass: process.env.BREVO_PASS,
   khalti: {
     api_key: process.env.KHALTI_API_KEY || "",
     api_url: process.env.KHALTI_API_URL || "",
