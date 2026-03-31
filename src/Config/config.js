@@ -11,6 +11,7 @@ const config = {
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",
+  resend_api_key: process.env.RESEND_API_KEY,
   khalti: {
     api_key: process.env.KHALTI_API_KEY || "",
     api_url: process.env.KHALTI_API_URL || "",
