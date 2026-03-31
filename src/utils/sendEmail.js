@@ -2,13 +2,16 @@ import nodemailer from "nodemailer";
 import config from "../Config/config.js";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
+  host: "smtp.gmail.com",  
   port: 587,
-  secure: false,
+  secure: false,           
   auth: {
     user: config.smtp_mail,
-    pass: config.brevo_smtp_key,
+    pass: config.smtp_password,
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 const sendEmail = async ({ email, subject, message }) => {
