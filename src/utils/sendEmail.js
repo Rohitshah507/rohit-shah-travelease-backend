@@ -16,12 +16,15 @@ const sendEmail = async ({ email, subject, message }) => {
 
   // 🔍 ADD THIS - log what credentials are being used
   console.log("📧 Attempting email send...");
-  console.log("BREVO_USER:", config.brevo_user ? config.brevo_user : "❌ MISSING");
+  console.log(
+    "BREVO_USER:",
+    config.brevo_user ? config.brevo_user : "❌ MISSING",
+  );
   console.log("BREVO_PASS:", config.brevo_pass ? "✅ EXISTS" : "❌ MISSING");
   console.log("TO:", email);
 
   const mailOptions = {
-    from: `"TravelEase" <${config.brevo_user}>`,
+    from: `"TravelEase" <shahaaditya1111@gmail.com>`,
     to: email,
     subject: subject,
     html: message,
