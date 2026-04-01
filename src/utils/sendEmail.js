@@ -1,30 +1,38 @@
+import nodemailer from "nodemailer";
 import config from "../Config/config.js";
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: config.smtp_mail,
+    pass: config.smtp_password,
+  },
+});
 
 const sendEmail = async ({ email, subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${config.resend_api_key}`,
-    },
-    body: JSON.stringify({
-      from: "TravelEase <onboarding@resend.dev>",
-      to: [email],
-      subject: subject,
-      html: message,
-    }),
-  });
+  console.log("📧 Attempting email send...");
+  console.log("SMTP_MAIL:", config.smtp_mail ? config.smtp_mail : "❌ MISSING");
+  console.log("TO:", email);
 
-  const data = await response.json();
+  const mailOptions = {
+    from: `"TravelEase" <${config.smtp_mail}>`,
+    to: email,
+    subject: subject,
+    html: message,
+  };
 
-  if (!response.ok) {
-    console.error("❌ Resend error:", JSON.stringify(data));
-    throw new Error(data.message || "Failed to send email");
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.response);
+  } catch (err) {
+    console.error("❌ Email error code:", err.code);
+    console.error("❌ Email error message:", err.message);
+    throw err;
   }
-
-  console.log("✅ Email sent:", data.id);
 };
 
 export { sendEmail };
