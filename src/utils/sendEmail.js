@@ -1,43 +1,26 @@
-import nodemailer from "nodemailer";
+import * as Brevo from "@getbrevo/brevo";
 import config from "../Config/config.js";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: config.brevo_user,
-    pass: config.brevo_pass,
-  },
-});
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.authentications["apiKey"].apiKey = config.brevo_api_key;
 
 const sendEmail = async ({ email, subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
-  // 🔍 ADD THIS - log what credentials are being used
-  console.log("📧 Attempting email send...");
-  console.log(
-    "BREVO_USER:",
-    config.brevo_user ? config.brevo_user : "❌ MISSING",
-  );
-  console.log("BREVO_PASS:", config.brevo_pass ? "✅ EXISTS" : "❌ MISSING");
-  console.log("TO:", email);
-
-  const mailOptions = {
-    from: `"TravelEase" <shahaaditya1111@gmail.com>`,
-    to: email,
-    subject: subject,
-    html: message,
+  const sendSmtpEmail = new Brevo.SendSmtpEmail();
+  sendSmtpEmail.sender = {
+    name: "TravelEase",
+    email: "shahaaditya1111@gmail.com",
   };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = message;
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.response);
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("✅ Email sent:", result.body.messageId);
   } catch (err) {
-    // 🔍 Log the FULL error object, not just message
-    console.error("❌ Email error code:", err.code);
-    console.error("❌ Email error message:", err.message);
-    console.error("❌ Email error response:", err.response);
+    console.error("❌ Brevo API error:", err.message);
     throw err;
   }
 };
