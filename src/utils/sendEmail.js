@@ -1,17 +1,14 @@
-import * as Brevo from "@getbrevo/brevo";
+import SibApiV3Sdk from "@getbrevo/brevo";
 import config from "../Config/config.js";
 
-const apiInstance = new Brevo.TransactionalEmailsApi();
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 apiInstance.authentications["apiKey"].apiKey = config.brevo_api_key;
 
 const sendEmail = async ({ email, subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
-  const sendSmtpEmail = new Brevo.SendSmtpEmail();
-  sendSmtpEmail.sender = {
-    name: "TravelEase",
-    email: "shahaaditya1111@gmail.com",
-  };
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.sender = { name: "TravelEase", email: "shahaaditya1111@gmail.com" };
   sendSmtpEmail.to = [{ email }];
   sendSmtpEmail.subject = subject;
   sendSmtpEmail.htmlContent = message;
