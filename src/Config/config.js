@@ -8,6 +8,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || "",
   smtp_mail: process.env.SMTP_MAIL,
   smtp_password: process.env.SMTP_PASSWORD,
+  smtp_host: process.env.SMTP_HOST,
+  smtp_port: Number(process.env.SMTP_PORT),
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",

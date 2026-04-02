@@ -9,11 +9,14 @@ const sendEmail = async (email, { subject, message }) => {
   const transporter = nodemailer.createTransport({
     host: config.smtp_host,
     port: config.smtp_port,
-    secure: false,
+    secure: false, // 587 = false
     auth: {
       user: config.smtp_mail,
       pass: config.smtp_password,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
   const mailOptions = {
