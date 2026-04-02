@@ -1,37 +1,27 @@
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "@sendinblue/client";
 import config from "../Config/config.js";
+
+// Initialize Brevo client
+const client = new SibApiV3Sdk.TransactionalEmailsApi();
+client.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, config.brevo_api_key);
 
 const sendEmail = async (email, { subject, message }) => {
   if (!email) {
     throw new Error("Email recipient is missing");
   }
 
-  const transporter = nodemailer.createTransport({
-    host: config.smtp_host,
-    port: config.smtp_port,
-    secure: false, // 587 = false
-    auth: {
-      user: config.smtp_mail,
-      pass: config.smtp_password,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
+    to: [{ email }],
+    sender: { email: config.smtp_mail, name: "Your App Name" },
+    subject: subject,
+    htmlContent: message,
   });
 
-  const mailOptions = {
-    from: config.smtp_mail,
-    to: email,
-    subject: subject,
-    html: message,
-  };
-
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.response);
+    const response = await client.sendTransacEmail(sendSmtpEmail);
+    console.log("✅ Email sent successfully:", response);
   } catch (err) {
-    console.error("❌ Email error code:", err.code);
-    console.error("❌ Email error message:", err.message);
+    console.error("❌ Email error:", err);
     throw err;
   }
 };
