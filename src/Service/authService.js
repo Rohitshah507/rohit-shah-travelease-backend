@@ -106,7 +106,7 @@ const resetPasswordService = async (data) => {
   const hashedPassword = await bcrypt.hash(data.newPassword, 10);
 
   user.password = hashedPassword;
-  user.isOTPVerified = false;
+  user.isOTPVerified = true;
   await user.save();
 
   return {

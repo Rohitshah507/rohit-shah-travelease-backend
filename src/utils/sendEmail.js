@@ -1,25 +1,23 @@
 import nodemailer from "nodemailer";
 import config from "../Config/config.js";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: config.smtp_mail,
-    pass: config.smtp_password,
-  },
-});
+const sendEmail = async (email, { subject, message }) => {
+  if (!email) {
+    throw new Error("Email recipient is missing");
+  }
 
-const sendEmail = async ({ email, subject, message }) => {
-  if (!email) throw new Error("Email recipient is missing");
-
-  console.log("📧 Attempting email send...");
-  console.log("SMTP_MAIL:", config.smtp_mail ? config.smtp_mail : "❌ MISSING");
-  console.log("TO:", email);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    port: 465,
+    secure: true,
+    auth: {
+      user: config.smtp_mail,
+      pass: config.smtp_password,
+    },
+  });
 
   const mailOptions = {
-    from: `"TravelEase" <${config.smtp_mail}>`,
+    from: config.smtp_mail,
     to: email,
     subject: subject,
     html: message,
