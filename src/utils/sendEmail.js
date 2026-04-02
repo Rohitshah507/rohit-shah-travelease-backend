@@ -1,27 +1,26 @@
-import SibApiV3Sdk from "@sendinblue/client";
+import sgMail from "@sendgrid/mail";
 import config from "../Config/config.js";
 
-// Initialize Brevo client
-const client = new SibApiV3Sdk.TransactionalEmailsApi();
-client.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, config.brevo_api_key);
+// Set API Key
+sgMail.setApiKey(config.sendgrid_api_key);
 
 const sendEmail = async (email, { subject, message }) => {
   if (!email) {
     throw new Error("Email recipient is missing");
   }
 
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
-    to: [{ email }],
-    sender: { email: config.smtp_mail, name: "Your App Name" },
+  const msg = {
+    to: email,
+    from: config.email_from, // verified sender
     subject: subject,
-    htmlContent: message,
-  });
+    html: message,
+  };
 
   try {
-    const response = await client.sendTransacEmail(sendSmtpEmail);
+    const response = await sgMail.send(msg);
     console.log("✅ Email sent successfully:", response);
   } catch (err) {
-    console.error("❌ Email error:", err);
+    console.error("❌ SendGrid error:", err.response?.body || err.message);
     throw err;
   }
 };
