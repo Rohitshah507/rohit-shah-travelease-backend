@@ -13,6 +13,8 @@ const config = {
   smtp_mail: process.env.SMTP_MAIL || "",
   smtp_password: process.env.SMTP_PASSWORD || "",
 
+  resend_api_key: process.env.RESEND_API_KEY || "",
+
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",
