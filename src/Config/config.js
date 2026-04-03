@@ -12,6 +12,7 @@ const config = {
 
   smtp_mail: process.env.SMTP_MAIL || "",
   smtp_password: process.env.SMTP_PASSWORD || "",
+  smtp_port: process.env.SMTP_PORT || "",
 
   resend_api_key: process.env.RESEND_API_KEY || "",
 

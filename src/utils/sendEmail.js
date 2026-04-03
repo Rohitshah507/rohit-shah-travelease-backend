@@ -1,21 +1,31 @@
-import { Resend } from 'resend';
+import nodemailer from "nodemailer";
 import config from "../Config/config.js";
 
-const resend = new Resend(config.resend_api_key);
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",  
+  port: config.smtp_port,
+  secure: false,           
+  auth: {
+    user: config.smtp_mail,
+    pass: config.smtp_password,
+  },
+});
 
-const sendEmail = async (email, { subject, message }) => {
+const sendEmail = async (email, {subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
+  const mailOptions = {
+    from: `"TravelEase" <${config.smtp_mail}>`,
+    to: email,
+    subject: subject,
+    html: message,
+  };
+
   try {
-    await resend.emails.send({
-      from: 'NepFund <onboarding@resend.dev>',
-      to: email,
-      subject: subject,
-      html: message,
-    });
-    console.log(`✅ OTP sent successfully to ${email}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.response);
   } catch (err) {
-    console.error("❌ Resend error:", err.message);
+    console.error("❌ Email error:", err.message); 
     throw err;
   }
 };
