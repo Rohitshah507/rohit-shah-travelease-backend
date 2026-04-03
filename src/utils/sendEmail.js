@@ -1,33 +1,27 @@
-import nodemailer from "nodemailer";
 import config from "../Config/config.js";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",  
-  port: config.smtp_port,
-  secure: false,           
-  auth: {
-    user: config.smtp_mail,
-    pass: config.smtp_password,
-  },
-});
+const sendEmail = async ({ email, subject, message }) => {
+  const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${config.sendgrid_api_key}`,
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email }] }],
+      from: { email: "noreply@sendgrid.net", name: "TravelEase" },
+      subject: subject,
+      content: [{ type: "text/html", value: message }],
+    }),
+  });
 
-const sendEmail = async (email, {subject, message }) => {
-  if (!email) throw new Error("Email recipient is missing");
-
-  const mailOptions = {
-    from: `"TravelEase" <${config.smtp_mail}>`,
-    to: email,
-    subject: subject,
-    html: message,
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.response);
-  } catch (err) {
-    console.error("❌ Email error:", err.message); 
-    throw err;
+  if (!response.ok) {
+    const data = await response.json();
+    console.error("❌ SendGrid error:", JSON.stringify(data));
+    throw new Error("Failed to send email");
   }
+
+  console.log("✅ Email sent via SendGrid");
 };
 
 export { sendEmail };
