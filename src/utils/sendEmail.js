@@ -28,7 +28,7 @@ const sendEmail = async ({ email, subject, message }) => {
   if (!email) throw new Error("Email recipient is missing");
 
   const mailOptions = {
-    from: `"NepFund" <${config.smtp_mail}>`,
+    from: `"TravelEase" <${config.smtp_mail}>`,
     to: email,
     subject: subject,
     html: message,
