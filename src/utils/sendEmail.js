@@ -1,6 +1,6 @@
 import config from "../Config/config.js";
 
-const sendEmail = async ({ email, subject, message }) => {
+const sendEmail = async ( email, {subject, message }) => {
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
     headers: {
