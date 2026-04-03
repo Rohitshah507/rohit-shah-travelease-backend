@@ -10,6 +10,9 @@ const config = {
   sendgrid_api_key: process.env.SENDGRID_API_KEY || "",
   email_from: process.env.EMAIL_FROM || "",
 
+  smtp_mail: process.env.SMTP_MAIL || "",
+  smtp_password: process.env.SMTP_PASSWORD || "",
+
   cloud_name: process.env.CLOUD_NAME || "",
   api_key: process.env.API_KEY || "",
   api_secret: process.env.API_SECRET || "",
