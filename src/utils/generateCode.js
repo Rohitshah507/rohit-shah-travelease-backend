@@ -13,7 +13,7 @@ const generateVerificationCode = () => {
 const sendVerificationCode = async (email, verificationCode) => {
   try {
     const message = generateEmailTemplate(verificationCode);
-    await sendEmail(email, { subject: "Your Verification Code", message });
+    await sendEmail({ email, subject: "Your Verification Code", message });
     console.log(`✅ OTP sent successfully to ${email}`);
   } catch (error) {
     // ✅ Log clearly in Render logs so you can debug
@@ -32,7 +32,7 @@ const generateResetCode = () => {
 const sendResetCode = async (email, resetCode) => {
   try {
     const message = resetEmailTemplate(resetCode);
-    await sendEmail(email, { subject: "Reset Code", message });
+    await sendEmail({ email, subject: "Reset Code", message });
     console.log(`✅ Reset code sent successfully to ${email}`);
   } catch (error) {
     console.error(`❌ Failed to send reset code to ${email}:`, error.message);
