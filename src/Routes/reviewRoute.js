@@ -6,15 +6,18 @@ import reviewController from "../Controller/reviewController.js";
 
 const router = express.Router();
 
-// Create review (only tourist)
+// ⚠️  ORDER MATTERS in Express — specific routes must come BEFORE param routes
+// "/all" and "/guide/:guideId" must be declared before "/:id"
+// otherwise Express matches "all" and "guide" as the :id param
+
+// Create review (tourist only)
 router.post("/", auth, roleBasedAuth("TOURIST"), reviewController.createReview);
 
-// Get reviews for a package
-router.get("/package/:id", reviewController.getPackageReviews);
-
+// ✅ These specific routes go FIRST
 router.get("/all", reviewController.getAllReviews);
-
-// Get guide rating
 router.get("/guide/:guideId", reviewController.getGuideRating);
+
+// ✅ Generic param route goes LAST
+router.get("/:id", reviewController.getPackageReviews);
 
 export default router;

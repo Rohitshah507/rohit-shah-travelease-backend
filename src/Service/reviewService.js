@@ -55,18 +55,42 @@ const getAllReviews = async () => {
 
 // Get guide average rating
 const getGuideRating = async (guideId) => {
-  const result = await Review.aggregate([
-    { $match: { guideId } },
-    {
-      $group: {
-        _id: null,
-        avgRating: { $avg: "$rating" },
-        totalReviews: { $sum: 1 },
-      },
-    },
-  ]);
+  const packages = await TourPackage.find({ guideId }).select("_id title");
+  const packageIds = packages.map((p) => p._id);
 
-  return result[0] || { avgRating: 0, totalReviews: 0 };
+  if (packageIds.length === 0) {
+    return { reviews: [], avgRating: 0 };
+  }
+
+  const reviews = await Review.find({
+    tourPackageId: { $in: packageIds },
+  })
+    .populate("userId", "name email location")
+    .populate("tourPackageId", "title destination")
+    .sort({ createdAt: -1 });
+
+  const avgRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
+
+  const shaped = reviews.map((r) => ({
+    _id: r._id,
+    tourist: r.userId?.name || "Anonymous",
+    tourTitle: r.tourPackageId?.title || "Tour Package",
+    rating: r.rating,
+    review: r.comment,
+    date: new Date(r.createdAt).toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    createdAt: r.createdAt,
+  }));
+
+  return {
+    reviews: shaped,
+    avgRating: parseFloat(avgRating.toFixed(1)),
+  };
 };
 
 export default {
