@@ -230,7 +230,7 @@ const verifyOTP = async (req, res) => {
 const resetPassword = async (req, res) => {
   const { email, newPassword } = req.body;
   try {
-    const user = resetPasswordService({ email, newPassword });
+    const user = await resetPasswordService({ email, newPassword });
     return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json({
