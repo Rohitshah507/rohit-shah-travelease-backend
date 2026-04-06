@@ -17,7 +17,7 @@ router.post("/", auth, roleBasedAuth("TOURIST"), reviewController.createReview);
 router.get("/all", reviewController.getAllReviews);
 router.get("/guide/:guideId", reviewController.getGuideRating);
 
-// ✅ Generic param route goes LAST
+
 router.get("/:id", reviewController.getPackageReviews);
 
 export default router;
