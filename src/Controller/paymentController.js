@@ -1,4 +1,7 @@
 import paymentService from "../Service/paymentService.js";
+import Notification from "../Model/Notification.js";
+import User from "../Model/User.js";
+import { io, userSocketMap } from "../utils/socket.js";
 
 const initiateKhalti = async (req, res) => {
   try {
@@ -9,7 +12,24 @@ const initiateKhalti = async (req, res) => {
       req.user._id,
     );
 
-    res.json({
+    // Notify admin
+    const adminUser = await User.findOne({ role: "ADMIN" });
+    if (adminUser) {
+      const msg = `💰 New payment initiated by ${req.user.username || "a user"}!`;
+
+      await Notification.create({
+        userId: adminUser._id,
+        message: msg,
+        type: "PAYMENT",
+        isRead: false,
+      });
+
+      const adminSocketId = userSocketMap.get(adminUser._id.toString());
+      if (adminSocketId) {
+        io.to(adminSocketId).emit("paymentSuccess", { message: msg });
+      }
+    }
+    return res.json({
       success: true,
       paymentUrl: khaltiResponse.payment_url,
       pidx: khaltiResponse.pidx,
@@ -24,7 +44,7 @@ const initiateKhalti = async (req, res) => {
 
 const ConfirmPayment = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
 
     const data = await paymentService.ConfirmPayment(id);
 

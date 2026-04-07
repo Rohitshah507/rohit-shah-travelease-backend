@@ -9,6 +9,8 @@ import {
 } from "../Service/authService.js";
 
 import User from "../Model/User.js";
+import Notification from "../Model/Notification.js";
+import { io, userSocketMap } from "../utils/socket.js";
 
 const signUp = async (req, res) => {
   try {
@@ -93,6 +95,26 @@ const verifyEmail = async (req, res) => {
     user.verificationCode = null;
     user.verificationCodeExpiryTime = null;
     await user.save();
+
+    // If verified user is a GUIDE, notify admin
+    if (user.role?.includes("GUIDE")) {
+      const adminUser = await User.findOne({ role: "ADMIN" });
+      if (adminUser) {
+        const msg = `👤 New guide "${user.username}" has signed up and is awaiting approval!`;
+
+        await Notification.create({
+          userId: adminUser._id,
+          message: msg,
+          type: "USER",
+          isRead: false,
+        });
+
+        const adminSocketId = userSocketMap.get(adminUser._id.toString());
+        if (adminSocketId) {
+          io.to(adminSocketId).emit("guideApproved", { message: msg });
+        }
+      }
+    }
 
     return res.status(200).json({
       success: true,
