@@ -2,7 +2,7 @@ import Payment from "../Model/Payment.js";
 import Booking from "../Model/Booking.js";
 import payment from "../utils/payment.js";
 import Notification from "../Model/Notification.js";
-import {io, userSocketMap} from "../socket.js";
+import {io, userSocketMap} from "../utils/socket.js";
 
 const initiateKhalti = async (id, userId) => {
   const booking = await Booking.findById(id)
