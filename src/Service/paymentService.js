@@ -2,7 +2,7 @@ import Payment from "../Model/Payment.js";
 import Booking from "../Model/Booking.js";
 import payment from "../utils/payment.js";
 import Notification from "../Model/Notification.js";
-import {io, userSocketMap} from "../utils/socket.js";
+import { io, userSocketMap } from "../utils/socket.js";
 
 const initiateKhalti = async (id, userId) => {
   const booking = await Booking.findById(id)
@@ -14,6 +14,10 @@ const initiateKhalti = async (id, userId) => {
   if (booking.userId._id.toString() !== userId.toString()) {
     throw { statusCode: 403, message: "Unauthorized" };
   }
+
+  const paymentStatus = await Payment.findOne({ bookingId: booking._id }).sort({
+    createdAt: -1,
+  });
 
   const existing = await Payment.findOne({
     bookingId: booking._id,
@@ -50,7 +54,10 @@ const initiateKhalti = async (id, userId) => {
     transaction_uuid,
   });
 
-  return khaltiResponse;
+  return {
+    khaltiResponse,
+    paymentStatus: paymentStatus ? paymentStatus.status : null,
+  };
 };
 
 const ConfirmPayment = async (paymentId) => {

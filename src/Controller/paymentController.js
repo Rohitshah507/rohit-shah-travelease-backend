@@ -7,7 +7,7 @@ const initiateKhalti = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const khaltiResponse = await paymentService.initiateKhalti(
+    const { khaltiResponse, paymentStatus } = await paymentService.initiateKhalti(
       id,
       req.user._id,
     );
@@ -33,6 +33,7 @@ const initiateKhalti = async (req, res) => {
       success: true,
       paymentUrl: khaltiResponse.payment_url,
       pidx: khaltiResponse.pidx,
+      status: paymentStatus,
     });
   } catch (error) {
     res.status(error.statusCode || 400).json({

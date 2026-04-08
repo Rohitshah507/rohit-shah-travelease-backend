@@ -18,7 +18,7 @@ const createBooking = async (bookedBy, data) => {
     tourPackageId: data.tourPackageId,
     startDate: data.startDate,
     endDate: data.endDate,
-    bookingStatus: { $in: ["Pending", "Confirmed"] },
+    bookingStatus: { $in: ["PENDING", "CONFIRMED"] },
   });
   if (checkingBooked) {
     throw { statusCode: 404, message: "Its already Booked" };
@@ -27,7 +27,7 @@ const createBooking = async (bookedBy, data) => {
   const booking = await Booking.create({
     userId: bookedBy,
     ...data,
-    bookingStatus: "Pending",
+    bookingStatus: "PENDING",
   });
 
   await Notification.create({
@@ -96,7 +96,16 @@ const confirmationBooking = async (id, userId) => {
     throw { statusCode: 402, message: "Not Authorized" };
   }
 
-  booking.bookingStatus = "Confirmed";
+  if (booking.bookingStatus === "CONFIRMED") {
+    throw { statusCode: 400, message: "Booking is already confirmed" };
+  }
+
+  booking.bookingStatus = "CONFIRMED";
+
+  if (booking.endDate < new Date()) {
+    booking.bookingStatus = "COMPLETED";
+  }
+
   await booking.save();
 
   await Notification.create({
@@ -126,7 +135,7 @@ const cancelBooking = async (id, userId) => {
     throw { statusCode: 402, message: "Not Authorized" };
   }
 
-  booking.bookingStatus = "Cancelled";
+  booking.bookingStatus = "CANCELLED";
   await booking.save();
   return booking;
 };
@@ -145,7 +154,7 @@ const guideCancelBooking = async (id, userId) => {
     throw { statusCode: 401, message: "Unauthorized" };
   }
 
-  booking.bookingStatus = "Cancelled";
+  booking.bookingStatus = "CANCELLED";
   await booking.save();
 
   await Notification.create({

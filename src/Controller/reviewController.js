@@ -5,10 +5,17 @@ const createReview = async (req, res) => {
   try {
     const { tourPackageId, rating, comment } = req.body;
 
-    if (!tourPackageId || !rating) {
+    if (!tourPackageId || !rating || !comment) {
       return res.status(400).json({
         success: false,
-        message: "TourPackageId and rating are required",
+        message: "TourPackageId, rating, and comment are required",
+      });
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating must be between 1 and 5",
       });
     }
 

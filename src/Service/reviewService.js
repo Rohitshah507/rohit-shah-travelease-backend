@@ -8,7 +8,7 @@ const createReview = async (userId, tourPackageId, rating, comment) => {
   const booking = await Booking.findOne({
     userId,
     tourPackageId,
-    status: "COMPLETED",
+    bookingStatus: "COMPLETED",
   });
 
   if (!booking) {
