@@ -2,71 +2,93 @@ const generateEmailTemplate = (verificationCode) => {
   const otpArray = verificationCode.split("");
 
   return `
-  <div style="font-family: 'Inter', Arial, sans-serif; background:#0f0623; padding:30px 0;">
-    
-    <div style="max-width:600px;margin:auto;background:#1a0a2e;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">
-      
-      <!-- IMAGE BANNER -->
-      <img src="https://live.worldtourismforum.net/uploads/Global-Travel-and-Tourism-Set-for-Record-Breaking-2025.jpg"
-           style="width:100%;height:200px;object-fit:cover;" />
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1f8;padding:40px 16px;font-family:Arial,sans-serif;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:460px;background:#1a0a2e;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);">
 
-      <!-- CONTENT -->
-      <div style="padding:30px;text-align:center;color:#f8f4ff;">
-        
-        <h2 style="margin-bottom:10px;font-size:24px;">
-          Welcome to <span style="color:#ec4899;">TravelEase</span> ✈️
-        </h2>
+          <!-- HEADER -->
+          <tr>
+            <td style="background:#2d1457;padding:28px 28px 20px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto 16px;">
+                <tr>
+                  <td style="background:rgba(253,224,139,0.15);border:1px solid rgba(253,224,139,0.3);border-radius:50px;padding:6px 18px;">
+                    <span style="font-size:13px;font-weight:600;color:#fde08b;letter-spacing:0.5px;">TravelEase ✈️</span>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#fef9ec;">Verify your login</p>
+              <p style="margin:0;font-size:13px;color:#c4b5d4;line-height:1.6;">
+                Use the code below to complete your login.<br/>It expires in 5 minutes.
+              </p>
+            </td>
+          </tr>
 
-        <p style="color:#c4b5d4;font-size:14px;margin-bottom:25px;">
-          Use the verification code below to complete your login
-        </p>
+          <!-- OTP SECTION -->
+          <tr>
+            <td style="background:#130830;padding:28px 28px 24px;text-align:center;">
+              <p style="margin:0 0 16px;font-size:11px;font-weight:600;letter-spacing:1.4px;color:#a08dbe;text-transform:uppercase;">
+                Your one-time code
+              </p>
 
-        <!-- OTP BOXES -->
-        <div style="display:flex;justify-content:center;gap:10px;margin-bottom:25px;">
-          ${otpArray
-            .map(
-              (digit) => `
-              <div style="
-                width:45px;
-                height:55px;
-                background:#2d1457;
-                border-radius:10px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:22px;
-                font-weight:bold;
-                color:#ec4899;
-                border:1px solid rgba(236,72,153,0.3);
-                box-shadow:0 0 10px rgba(236,72,153,0.2);
-              ">
-                ${digit}
-              </div>
-            `
-            )
-            .join("")}
-        </div>
+              <!-- OTP BOXES -->
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto 22px;">
+                <tr>
+                  ${otpArray
+                    .map(
+                      (digit) => `
+                    <td style="padding:0 4px;">
+                      <table cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td width="44" height="52" style="
+                            background:#1e0d3a;
+                            border:1px solid rgba(253,224,139,0.35);
+                            border-radius:10px;
+                            text-align:center;
+                            vertical-align:middle;
+                            font-size:22px;
+                            font-weight:700;
+                            color:#fde08b;
+                            width:44px;
+                            height:52px;
+                          ">${digit}</td>
+                        </tr>
+                      </table>
+                    </td>
+                  `,
+                    )
+                    .join("")}
+                </tr>
+              </table>
 
-        <p style="color:#8b7aab;font-size:13px;margin-bottom:20px;">
-          This code will expire in <b>5 minutes</b>.
-        </p>
+              <!-- EXPIRY BOX -->
+              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:16px;">
+                <tr>
+                  <td style="background:rgba(253,224,139,0.07);border:1px solid rgba(253,224,139,0.15);border-radius:8px;padding:10px 16px;text-align:center;">
+                    <span style="font-size:12px;color:#a08dbe;">
+                      This code is valid for <span style="color:#fde08b;font-weight:600;">5 minutes</span> only.
+                    </span>
+                  </td>
+                </tr>
+              </table>
 
-        <p style="color:#8b7aab;font-size:12px;">
-          If you didn’t request this, you can safely ignore this email.
-        </p>
+              <p style="margin:0;font-size:11px;color:#6b5a82;">
+                Didn't request this? You can safely ignore this email.
+              </p>
+            </td>
+          </tr>
 
-      </div>
+          <!-- FOOTER -->
+          <tr>
+            <td style="background:#0d0520;padding:14px 20px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);">
+              <p style="margin:0;font-size:11px;color:#6b5a82;">© 2025 TravelEase • All Rights Reserved</p>
+            </td>
+          </tr>
 
-      <!-- FOOTER -->
-      <div style="background:#0d0520;padding:15px;text-align:center;">
-        <p style="color:#8b7aab;font-size:12px;margin:0;">
-          © 2025 TravelEase • All Rights Reserved
-        </p>
-      </div>
-
-    </div>
-
-  </div>
+        </table>
+      </td>
+    </tr>
+  </table>
   `;
 };
 
