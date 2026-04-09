@@ -26,8 +26,11 @@ const createProduct = async (data, files, createdBy) => {
 };
 
 const getAllPackages = async () => {
-  const packages = await TourPackage.find();
-  return packages;
+  const getPackages = await TourPackage.find().populate(
+    "guideId",
+    "username email",
+  );
+  return getPackages;
 };
 
 const getPackageById = async (id) => {

@@ -17,9 +17,8 @@ export const startBookingCron = () => {
         },
       );
 
-      console.log(`✅ Cron Ran: ${result.modifiedCount} bookings updated`);
     } catch (error) {
-      console.error("❌ Cron Error:", error.message);
+      throw error || { statusCode: 500, message: "Error updating bookings in cron job" };
     }
   });
 };
