@@ -55,16 +55,7 @@ const getAllReviews = async () => {
 
 // Get guide average rating
 const getGuideRating = async (guideId) => {
-  const packages = await TourPackage.find({ guideId }).select("_id title");
-  const packageIds = packages.map((p) => p._id);
-
-  if (packageIds.length === 0) {
-    return { reviews: [], avgRating: 0 };
-  }
-
-  const reviews = await Review.find({
-    tourPackageId: { $in: packageIds },
-  })
+  const reviews = await Review.find({ guideId })
     .populate("userId", "name email location")
     .populate("tourPackageId", "title destination")
     .sort({ createdAt: -1 });
@@ -87,10 +78,7 @@ const getGuideRating = async (guideId) => {
     createdAt: r.createdAt,
   }));
 
-  return {
-    reviews: shaped,
-    avgRating: parseFloat(avgRating.toFixed(1)),
-  };
+  return { reviews: shaped, avgRating: parseFloat(avgRating.toFixed(1)) };
 };
 
 export default {

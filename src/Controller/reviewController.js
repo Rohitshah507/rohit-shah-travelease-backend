@@ -78,18 +78,15 @@ const getAllReviews = async (req, res) => {
 const getGuideRating = async (req, res) => {
   try {
     const { guideId } = req.params;
-
-    const rating = await reviewService.getGuideRating(guideId);
+    const { reviews, avgRating } = await reviewService.getGuideRating(guideId);
 
     res.json({
       success: true,
-      rating,
+      reviews,      
+      avgRating,    
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
