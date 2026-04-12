@@ -18,7 +18,6 @@ router.post(
 
 router.get(
   "/package",
-  auth,
   packageController.getAllPackages,
 );
 
