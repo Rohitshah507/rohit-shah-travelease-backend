@@ -56,7 +56,7 @@ const getAllReviews = async () => {
 // Get guide average rating
 const getGuideRating = async (guideId) => {
   const reviews = await Review.find({ guideId })
-    .populate("userId", "name email location")
+    .populate("userId", "username email location")
     .populate("tourPackageId", "title destination")
     .sort({ createdAt: -1 });
 
@@ -67,7 +67,7 @@ const getGuideRating = async (guideId) => {
 
   const shaped = reviews.map((r) => ({
     _id: r._id,
-    tourist: r.userId?.name || "Anonymous",
+    tourist: r.userId?.username || "Anonymous",
     tourTitle: r.tourPackageId?.title || "Tour Package",
     rating: r.rating,
     review: r.comment,
