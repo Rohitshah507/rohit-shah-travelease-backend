@@ -34,7 +34,6 @@ export const initSocket = (server) => {
             `📍 Location from guide ${userId} (${username}): ${latitude}, ${longitude}`,
           );
 
-          // ✅ Forward ALL guide info so admin can display name/phone/email
           io.emit("receiveLocation", {
             userId,
             latitude,

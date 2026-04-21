@@ -39,7 +39,7 @@ router.put(
 router.delete(
   "/:id",
   auth,
-  roleBasedAuth("GUIDE"),
+  roleBasedAuth("GUIDE", "ADMIN"),
   packageController.deletePackage,
 );
 
