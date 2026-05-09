@@ -28,7 +28,7 @@ const signUp = async (req, res) => {
       });
     }
 
-    if (!userData.phoneNumber.length != 10) {
+    if (userData.phoneNumber.length != 10) {
       return res.status(400).json({
         success: false,
         message: "Phone Number need to be 10 digit",
