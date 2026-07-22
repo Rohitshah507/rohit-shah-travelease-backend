@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
     },
     guideDocument: {
       type: String,
-      required: function () {
+      required: () => {
         return this.role === "GUIDE";
       },
     },

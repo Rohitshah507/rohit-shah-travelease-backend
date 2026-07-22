@@ -40,8 +40,8 @@ const createUser = async (data, files) => {
     verificationCodeExpiryTime,
   });
 
-    sendVerificationCode(createdUser.email, verificationCode).catch((err) =>
-    console.error("Background email error:", err.message)
+  sendVerificationCode(createdUser.email, verificationCode).catch((err) =>
+    console.error("Background email error:", err.message),
   );
 
   const userData = {
@@ -96,7 +96,7 @@ const sendOTPService = async (email) => {
 const resetPasswordService = async (data) => {
   const user = await User.findOne({ email: data.email });
 
-  if (!user || !user.isOTPVerified) {
+  if (user.isOTPVerified != true) {
     throw {
       statusCode: 400,
       message: "Otp needs to verify",
