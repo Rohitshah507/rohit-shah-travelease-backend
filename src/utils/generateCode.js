@@ -16,7 +16,6 @@ const sendVerificationCode = async (email, verificationCode) => {
     await sendEmail(email, { subject: "Your Verification Code", message });
     console.log(`✅ OTP sent successfully to ${email}`);
   } catch (error) {
-    // ✅ Log clearly in Render logs so you can debug
     console.error(`❌ Failed to send OTP to ${email}:`, error.message);
   }
 };

@@ -16,9 +16,13 @@ export const startBookingCron = () => {
           $set: { bookingStatus: "COMPLETED" },
         },
       );
-
     } catch (error) {
-      throw error || { statusCode: 500, message: "Error updating bookings in cron job" };
+      throw (
+        error || {
+          statusCode: 500,
+          message: "Error updating bookings in cron job",
+        }
+      );
     }
   });
 };

@@ -12,7 +12,7 @@ router.post(
   "/",
   auth,
   roleBasedAuth("GUIDE", "ADMIN"),
-  upload.array("images", 5),
+  upload.array("images", 1),
   packageController.createPackage,
 );
 
@@ -32,7 +32,7 @@ router.put(
   "/:id",
   auth,
   roleBasedAuth("GUIDE"),
-  upload.array("images", 5),
+  upload.array("images", 1),
   packageController.updatePackage,
 );
 
